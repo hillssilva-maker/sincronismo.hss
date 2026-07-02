@@ -1,0 +1,1411 @@
+<!DOCTYPE html>
+<!-- Arquivo estático para GitHub Pages. Não precisa de Node.js, npm, Vite ou React. -->
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Simulador de Sincronismo Semafórico</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --ink: #172033;
+      --muted: #64748b;
+      --line: #d7dee9;
+      --blue: #2563eb;
+      --blue-soft: #eaf1ff;
+      --cyan: #0ea5e9;
+      --green: #16a34a;
+      --green-soft: #e9f9ef;
+      --yellow: #f59e0b;
+      --yellow-soft: #fff4d6;
+      --red: #dc2626;
+      --red-soft: #ffe8e8;
+      --purple: #7c3aed;
+      --purple-soft: #f1eaff;
+      --shadow: 0 12px 30px rgba(32,45,80,.10);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at 20% 0%, rgba(37,99,235,.12), transparent 34%),
+        radial-gradient(circle at 90% 10%, rgba(22,163,74,.10), transparent 30%),
+        var(--bg);
+      color: var(--ink);
+    }
+
+    header {
+      padding: 22px 14px 18px;
+      text-align: center;
+      background: linear-gradient(135deg, #ffffff, #eaf1ff);
+      border-bottom: 1px solid var(--line);
+    }
+
+    header h1 {
+      margin: 0 0 6px;
+      font-size: clamp(1.35rem, 4vw, 2.3rem);
+      letter-spacing: -.035em;
+    }
+
+    header p {
+      max-width: 1000px;
+      margin: 0 auto;
+      color: var(--muted);
+      line-height: 1.45;
+      font-size: clamp(.9rem, 2.5vw, 1rem);
+    }
+
+    main {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 14px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(320px, 430px) 1fr;
+      gap: 16px;
+      align-items: start;
+    }
+
+    @media (max-width: 980px) {
+      .layout { grid-template-columns: 1fr; }
+      main { padding: 10px; }
+    }
+
+    .card {
+      background: rgba(255,255,255,.98);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .card-head {
+      padding: 14px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      border-bottom: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .card-head h2 {
+      margin: 0;
+      font-size: 1.05rem;
+    }
+
+    .card-body {
+      padding: 14px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-weight: 800;
+      font-size: .78rem;
+      background: var(--blue-soft);
+      color: var(--blue);
+      border: 1px solid #cfe0ff;
+    }
+
+    label {
+      display: block;
+      font-weight: 800;
+      margin: 10px 0 5px;
+      color: #26364f;
+      font-size: .9rem;
+    }
+
+    input {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: #fff;
+      padding: 11px;
+      border-radius: 13px;
+      font-size: 16px;
+      outline: none;
+      transition: .15s;
+    }
+
+    input:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 4px rgba(37,99,235,.12);
+    }
+
+    input.ok-cycle {
+      border-color: var(--green);
+      background: var(--green-soft);
+      color: #0f7a34;
+      font-weight: 900;
+    }
+
+    input.bad-cycle {
+      border-color: var(--red);
+      background: var(--red-soft);
+      color: #9f1717;
+      font-weight: 900;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    @media (max-width: 560px) {
+      .row { grid-template-columns: 1fr; gap: 0; }
+    }
+
+    .btns {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 13px;
+      padding: 11px 13px;
+      font-weight: 900;
+      cursor: pointer;
+      font-size: .92rem;
+      transition: .15s;
+      touch-action: manipulation;
+      min-height: 42px;
+    }
+
+    button:hover { filter: brightness(.98); }
+    button:active { transform: scale(.98); }
+
+    .btn-primary { background: var(--blue); color: white; }
+    .btn-green { background: var(--green); color: white; }
+    .btn-red { background: var(--red); color: white; }
+    .btn-soft { background: #eef2f7; color: #243042; }
+    .btn-purple { background: var(--purple); color: white; }
+
+    @media (max-width: 560px) {
+      .btns button {
+        flex: 1 1 100%;
+        width: 100%;
+      }
+    }
+
+    .message {
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 13px;
+      line-height: 1.35;
+      font-weight: 800;
+      background: #f8fafc;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      font-size: .9rem;
+    }
+
+    .message.ok { background: var(--green-soft); border-color: #b8efca; color: #0f7a34; }
+    .message.bad { background: var(--red-soft); border-color: #ffc2c2; color: #a31515; }
+
+    .status-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    @media (max-width: 560px) {
+      .status-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    .stat {
+      background: #f8fafc;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      padding: 9px;
+      text-align: center;
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 1.08rem;
+      color: var(--ink);
+    }
+
+    .stat span {
+      display: block;
+      font-size: .72rem;
+      color: var(--muted);
+      font-weight: 800;
+      margin-top: 2px;
+    }
+
+    .stage-fields {
+      display: grid;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .stage-field {
+      display: grid;
+      grid-template-columns: 52px 1fr auto;
+      gap: 8px;
+      align-items: center;
+      padding: 8px;
+      background: #f8fafc;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+    }
+
+    .stage-label {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      padding: 10px 6px;
+      text-align: center;
+      font-weight: 900;
+      color: var(--blue);
+    }
+
+    .sync-radio {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      font-weight: 800;
+      font-size: .82rem;
+      color: var(--purple);
+      padding: 0 4px;
+    }
+
+    .sync-radio input {
+      width: auto;
+      accent-color: var(--purple);
+    }
+
+    @media (max-width: 560px) {
+      .stage-field {
+        grid-template-columns: 48px 1fr;
+      }
+
+      .sync-radio {
+        grid-column: 1 / -1;
+        padding: 2px 4px;
+      }
+    }
+
+    .remaining {
+      margin-top: 10px;
+      padding: 11px;
+      border-radius: 15px;
+      background: var(--green-soft);
+      border: 1px solid #b8efca;
+      color: #0f7a34;
+      font-weight: 900;
+      line-height: 1.35;
+      font-size: .9rem;
+    }
+
+    .remaining.bad {
+      background: var(--red-soft);
+      border-color: #ffc2c2;
+      color: #a31515;
+    }
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 9px;
+      margin-bottom: 12px;
+    }
+
+    @media (max-width: 760px) {
+      .summary { grid-template-columns: 1fr 1fr; }
+    }
+
+    .summary .stat {
+      background: #fff;
+      box-shadow: 0 6px 15px rgba(32,45,80,.06);
+    }
+
+    .cross-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .cross-card {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: #fff;
+      box-shadow: 0 8px 18px rgba(32,45,80,.07);
+      overflow: hidden;
+    }
+
+    .cross-top {
+      background: linear-gradient(135deg, var(--blue), var(--cyan));
+      color: #fff;
+      padding: 11px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 9px;
+      flex-wrap: wrap;
+    }
+
+    .cross-name {
+      font-size: 1.12rem;
+      font-weight: 900;
+    }
+
+    .cross-actions {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+    }
+
+    .cross-actions button {
+      padding: 8px 10px;
+      border-radius: 11px;
+      min-height: 36px;
+    }
+
+    .cross-meta {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border-bottom: 1px solid var(--line);
+    }
+
+    @media (max-width: 620px) {
+      .cross-meta { grid-template-columns: 1fr 1fr 1fr; }
+      .cross-actions { width: 100%; }
+      .cross-actions button { flex: 1; }
+    }
+
+    .meta-cell {
+      padding: 9px 6px;
+      border-right: 1px solid var(--line);
+      text-align: center;
+      background: #fbfdff;
+    }
+
+    .meta-cell:last-child { border-right: 0; }
+
+    .meta-cell strong {
+      display: block;
+      font-size: 1rem;
+      color: var(--ink);
+    }
+
+    .meta-cell span {
+      color: var(--muted);
+      font-size: .7rem;
+      font-weight: 800;
+    }
+
+    .stage-row {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 10px;
+      background: #f8fafc;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .stage-box {
+      flex: 0 0 112px;
+      border-radius: 15px;
+      border: 2px solid #d6dde8;
+      background: #fff;
+      overflow: hidden;
+    }
+
+    .stage-box.selected {
+      border-color: var(--purple);
+      box-shadow: 0 0 0 3px rgba(124,58,237,.12);
+      background: var(--purple-soft);
+    }
+
+    .stage-title {
+      padding: 7px;
+      text-align: center;
+      font-weight: 900;
+      background: #eef2f7;
+      color: #26364f;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .stage-box.selected .stage-title {
+      background: var(--purple);
+      color: #fff;
+    }
+
+    .stage-values {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .stage-values div {
+      padding: 6px;
+      text-align: center;
+      border-right: 1px solid var(--line);
+    }
+
+    .stage-values div:last-child { border-right: 0; }
+
+    .stage-values span {
+      display: block;
+      font-size: .68rem;
+      font-weight: 900;
+      color: var(--muted);
+    }
+
+    .stage-values strong { font-size: .95rem; }
+
+    .open-time {
+      padding: 7px 5px;
+      background: var(--yellow-soft);
+      text-align: center;
+      font-weight: 900;
+      color: #7a4a00;
+      border-top: 1px solid #ffd98a;
+      font-size: .84rem;
+    }
+
+    .selected-badge {
+      display: block;
+      margin: 5px;
+      padding: 4px;
+      border-radius: 8px;
+      background: var(--purple);
+      color: #fff;
+      text-align: center;
+      font-size: .58rem;
+      font-weight: 900;
+    }
+
+    .sync-box {
+      margin-top: 10px;
+      padding: 12px;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: #fff;
+      line-height: 1.4;
+      box-shadow: 0 6px 15px rgba(32,45,80,.06);
+      font-size: .92rem;
+    }
+
+    .sync-box.ok {
+      border-color: #b8efca;
+      background: var(--green-soft);
+    }
+
+    .sync-box.bad {
+      border-color: #ffc2c2;
+      background: var(--red-soft);
+    }
+
+    .sync-title {
+      font-weight: 900;
+      margin-bottom: 5px;
+      color: var(--ink);
+    }
+
+    .suggestion {
+      margin-top: 10px;
+      border-radius: 16px;
+      padding: 12px;
+      font-weight: 800;
+      box-shadow: 0 8px 18px rgba(32, 45, 80, .12);
+    }
+
+    .suggestion.need-adjust {
+      background: #fff8df;
+      border: 2px solid #f59e0b;
+      color: #4a3200;
+      box-shadow: 0 8px 18px rgba(245, 158, 11, .16);
+    }
+
+    .suggestion.synced {
+      background: var(--green-soft);
+      border: 2px solid var(--green);
+      color: #064e1f;
+      box-shadow: 0 8px 18px rgba(22, 163, 74, .16);
+    }
+
+    .suggestion-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 1rem;
+      font-weight: 900;
+      margin-bottom: 8px;
+      padding-bottom: 7px;
+    }
+
+    .suggestion.need-adjust .suggestion-title {
+      color: #92400e;
+      border-bottom: 1px solid #f3c96b;
+    }
+
+    .suggestion.synced .suggestion-title {
+      color: #0f7a34;
+      border-bottom: 1px solid #95e8b1;
+    }
+
+    .suggestion-main {
+      background: #ffffff;
+      border-radius: 14px;
+      padding: 10px;
+      text-align: center;
+      margin: 8px 0;
+    }
+
+    .suggestion.need-adjust .suggestion-main {
+      border: 2px solid #f59e0b;
+    }
+
+    .suggestion.synced .suggestion-main {
+      border: 2px solid var(--green);
+    }
+
+    .suggestion-main span {
+      display: block;
+      color: #7a4a00;
+      font-size: .82rem;
+      font-weight: 900;
+      margin-bottom: 3px;
+    }
+
+    .suggestion-main strong {
+      display: block;
+      color: #111827;
+      font-size: 1.7rem;
+      font-weight: 900;
+      line-height: 1.1;
+    }
+
+    .suggestion.synced .suggestion-main strong {
+      color: var(--green);
+    }
+
+    .suggestion-lines {
+      display: grid;
+      gap: 6px;
+      line-height: 1.4;
+    }
+
+    .suggestion-line {
+      background: rgba(255,255,255,.72);
+      border-radius: 12px;
+      padding: 8px;
+    }
+
+    .suggestion.need-adjust .suggestion-line {
+      border: 1px solid #f3c96b;
+    }
+
+    .suggestion.synced .suggestion-line {
+      border: 1px solid #95e8b1;
+    }
+
+    .animation-panel {
+      display: none;
+      margin-top: 12px;
+      background: #ffffff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .animation-panel.active { display: block; }
+
+    .animation-head {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 9px;
+      flex-wrap: wrap;
+      background: linear-gradient(135deg, #ffffff, #f3f7ff);
+    }
+
+    .animation-head h3 {
+      margin: 0;
+      font-size: 1rem;
+    }
+
+    .anim-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .anim-controls label {
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: .9rem;
+      color: var(--ink);
+    }
+
+    .anim-controls input {
+      width: auto;
+      accent-color: var(--blue);
+    }
+
+    .canvas-wrap {
+      padding: 10px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    canvas {
+      width: 100%;
+      min-width: 620px;
+      height: 340px;
+      background: #f8fafc;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      display: block;
+    }
+
+    @media (max-width: 560px) {
+      canvas {
+        min-width: 560px;
+        height: 300px;
+      }
+    }
+
+    .empty {
+      padding: 16px;
+      border: 1px dashed var(--line);
+      border-radius: 16px;
+      color: var(--muted);
+      background: #fff;
+      line-height: 1.4;
+      font-weight: 700;
+      font-size: .92rem;
+    }
+      .ok-text {
+      color: #0f7a34;
+      font-weight: 900;
+    }
+
+  
+    .stage-values .vd-cell strong {
+      color: var(--green);
+      font-weight: 900;
+    }
+
+    .stage-values .vd-cell span {
+      color: var(--green);
+    }
+
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>Simulador de Sincronismo Semafórico</h1>
+    <p>Cadastre cruzamentos, marque o estágio a sincronizar e visualize a simulação com sugestão de defasagem ideal.</p>
+  </header>
+
+  <main>
+    <div class="layout">
+      <section class="card">
+        <div class="card-head">
+          <h2 id="formTitle">Novo cruzamento</h2>
+          <span class="chip" id="stageCountChip">0 estágios</span>
+        </div>
+
+        <div class="card-body">
+          <label for="nome">Nome do cruzamento</label>
+          <input id="nome" type="text" placeholder="Ex.: A, B, C ou Av. Brasil" />
+
+          <div class="row">
+            <div>
+              <label for="ciclo">Ciclo total</label>
+              <input id="ciclo" type="number" min="1" step="1" placeholder="Ex.: 165" />
+            </div>
+            <div>
+              <label for="defasagem">Defasagem opcional</label>
+              <input id="defasagem" type="number" min="0" step="1" placeholder="Normal: 0" />
+            </div>
+          </div>
+
+          <div class="row">
+            <div>
+              <label for="transicao">Transição comum — TR</label>
+              <input id="transicao" type="number" min="0" step="1" placeholder="Ex.: 6" />
+            </div>
+            <div>
+              <label for="qtdEstagios">Quantidade de estágios</label>
+              <input id="qtdEstagios" type="number" min="1" step="1" placeholder="Ex.: 4" />
+            </div>
+          </div>
+
+          <div class="btns">
+            <button class="btn-primary" id="btnGerar">Gerar estágios</button>
+          </div>
+
+          <div id="stageFields" class="stage-fields">
+            <div class="empty">Os campos dos estágios aparecerão aqui.</div>
+          </div>
+
+          <div id="remaining" class="remaining">
+            Saldo de verde disponível, sem contar as transições: 0s
+          </div>
+
+          <div class="status-grid">
+            <div class="stat"><strong id="sumVd">0s</strong><span>Soma VD</span></div>
+            <div class="stat"><strong id="sumTr">0s</strong><span>Soma TR</span></div>
+            <div class="stat"><strong id="availableVd">0s</strong><span>VD disponível</span></div>
+            <div class="stat"><strong id="sumTotal">0s</strong><span>Total</span></div>
+          </div>
+
+          <div class="btns">
+            <button class="btn-green" id="btnSalvar">Adicionar à simulação</button>
+            <button class="btn-soft" id="btnNovo">Limpar cadastro</button>
+          </div>
+
+          <div id="message" class="message">Preencha os dados e gere os estágios.</div>
+        </div>
+      </section>
+
+      <section>
+        <div class="card">
+          <div class="card-head">
+            <h2>Simulação dos cruzamentos</h2>
+            <div class="btns" style="margin:0;">
+              <button class="btn-purple" id="btnToggleAnim">Mostrar animação</button>
+              <button class="btn-soft" id="btnExemplo">Exemplo</button>
+              <button class="btn-red" id="btnLimparTudo">Limpar tudo</button>
+            </div>
+          </div>
+
+          <div class="card-body">
+            <div class="summary">
+              <div class="stat"><strong id="qtdCruzamentos">0</strong><span>Cruzamentos</span></div>
+              <div class="stat"><strong id="cicloComum">-</strong><span>Ciclo comum</span></div>
+              <div class="stat"><strong id="qtdTestes">0</strong><span>Comparações</span></div>
+              <div class="stat"><strong id="statusGeral">-</strong><span>Status</span></div>
+            </div>
+
+            <div id="crossList" class="cross-list">
+              <div class="empty">Adicione pelo menos dois cruzamentos para testar o sincronismo.</div>
+            </div>
+          </div>
+        </div>
+
+        <div id="animationPanel" class="animation-panel">
+          <div class="animation-head">
+            <h3>Gráfico animado do sincronismo</h3>
+            <div class="anim-controls">
+              <label><input type="checkbox" id="animar" checked> animar ciclo</label>
+              <button class="btn-soft" id="btnResetAnim">Reiniciar</button>
+            </div>
+          </div>
+          <div class="canvas-wrap">
+            <canvas id="syncCanvas" width="1000" height="420"></canvas>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+
+    let cruzamentos = [];
+    let editandoId = null;
+    let animationVisible = false;
+    let animStart = performance.now();
+
+    function num(v) {
+      if (v === "" || v === null || v === undefined) return 0;
+      const n = Number(v);
+      return Number.isFinite(n) ? n : 0;
+    }
+
+    function msg(text, type = "") {
+      const el = $("message");
+      el.textContent = text;
+      el.className = "message" + (type ? " " + type : "");
+    }
+
+    function mdc(a, b) {
+      a = Math.abs(a);
+      b = Math.abs(b);
+      while (b) {
+        const t = b;
+        b = a % b;
+        a = t;
+      }
+      return a || 1;
+    }
+
+    function mmc(a, b) {
+      return Math.abs(a * b) / mdc(a, b);
+    }
+
+    function cicloComum() {
+      if (!cruzamentos.length) return 0;
+      return cruzamentos.map(c => c.ciclo).reduce((acc, c) => mmc(acc, c));
+    }
+
+    function getStageInputs() {
+      return Array.from(document.querySelectorAll(".vd-stage"));
+    }
+
+    function getSelectedStageIndex() {
+      const checked = document.querySelector("input[name='syncStage']:checked");
+      return checked ? Number(checked.value) : 0;
+    }
+
+    function calcForm() {
+      const ciclo = num($("ciclo").value);
+      const tr = num($("transicao").value);
+      const inputs = getStageInputs();
+      const qtd = inputs.length;
+      const sumVd = inputs.reduce((s, input) => s + num(input.value), 0);
+      const sumTr = qtd * tr;
+      const total = sumVd + sumTr;
+      const available = Math.max(0, ciclo - sumTr);
+      const remaining = available - sumVd;
+      return { ciclo, tr, qtd, sumVd, sumTr, total, available, remaining };
+    }
+
+    function updateForm() {
+      const c = calcForm();
+
+      $("stageCountChip").textContent = `${c.qtd} ${c.qtd === 1 ? "estágio" : "estágios"}`;
+      $("sumVd").textContent = `${c.sumVd}s`;
+      $("sumTr").textContent = `${c.sumTr}s`;
+      $("availableVd").textContent = `${c.available}s`;
+      $("sumTotal").textContent = `${c.total}s`;
+
+      const cicloInput = $("ciclo");
+      cicloInput.classList.remove("ok-cycle", "bad-cycle");
+
+      if (c.ciclo > 0 && c.qtd > 0) {
+        if (c.total === c.ciclo) cicloInput.classList.add("ok-cycle");
+        else cicloInput.classList.add("bad-cycle");
+      }
+
+      const rem = $("remaining");
+      if (c.remaining >= 0) {
+        rem.className = "remaining";
+        rem.textContent = `Saldo de verde disponível, sem contar as transições: ${c.remaining}s`;
+      } else {
+        rem.className = "remaining bad";
+        rem.textContent = `O tempo de verde ultrapassou o disponível em ${Math.abs(c.remaining)}s`;
+      }
+    }
+
+    function generateStageFields(values = [], selectedIndex = 0) {
+      const qtd = values.length || Math.floor(num($("qtdEstagios").value));
+      const container = $("stageFields");
+
+      if (qtd <= 0) {
+        msg("Informe a quantidade de estágios.", "bad");
+        return;
+      }
+
+      container.innerHTML = "";
+      for (let i = 0; i < qtd; i++) {
+        const row = document.createElement("div");
+        row.className = "stage-field";
+        row.innerHTML = `
+          <div class="stage-label">E${i + 1}</div>
+          <input class="vd-stage" type="number" min="1" step="1" inputmode="numeric" value="${values[i] || ""}" placeholder="VD do E${i + 1}">
+          <label class="sync-radio">
+            <input type="radio" name="syncStage" value="${i}" ${i === selectedIndex ? "checked" : ""}>
+            sincronizar
+          </label>
+        `;
+        container.appendChild(row);
+      }
+
+      msg("Preencha os verdes e marque o estágio que será sincronizado.", "ok");
+      updateForm();
+    }
+
+    function buildIntersection(existingId = null) {
+      const nome = $("nome").value.trim();
+      const ciclo = num($("ciclo").value);
+      const defasagem = num($("defasagem").value);
+      const tr = num($("transicao").value);
+      const inputs = getStageInputs();
+      const selected = getSelectedStageIndex();
+      const c = calcForm();
+
+      if (!nome) {
+        msg("Informe o nome do cruzamento.", "bad");
+        return null;
+      }
+
+      if (ciclo <= 0) {
+        msg("Informe um ciclo válido.", "bad");
+        return null;
+      }
+
+      if (!inputs.length) {
+        msg("Gere os estágios antes de adicionar.", "bad");
+        return null;
+      }
+
+      const valores = inputs.map(input => num(input.value));
+      if (valores.some(v => v <= 0)) {
+        msg("Todos os estágios precisam ter VD maior que zero.", "bad");
+        return null;
+      }
+
+      if (c.total !== ciclo) {
+        msg("A soma VD + TR precisa fechar exatamente com o ciclo antes de adicionar.", "bad");
+        return null;
+      }
+
+      const def = defasagem % ciclo;
+      let acumulado = 0;
+
+      const estagios = valores.map((verde, i) => {
+        const abreSem = acumulado;
+        const abreCom = (abreSem + def) % ciclo;
+        acumulado += verde + tr;
+
+        return {
+          nome: `E${i + 1}`,
+          verde,
+          transicao: tr,
+          abreSem,
+          abreCom,
+          testar: i === selected
+        };
+      });
+
+      return {
+        id: existingId || Date.now() + Math.floor(Math.random() * 1000000),
+        nome,
+        ciclo,
+        defasagem: def,
+        transicao: tr,
+        estagios
+      };
+    }
+
+    function saveIntersection() {
+      const c = buildIntersection(editandoId);
+      if (!c) return;
+
+      if (editandoId) {
+        cruzamentos = cruzamentos.map(x => x.id === editandoId ? c : x);
+        msg("Cruzamento editado e atualizado na simulação.", "ok");
+      } else {
+        cruzamentos.push(c);
+        msg("Cruzamento adicionado à simulação.", "ok");
+      }
+
+      clearForm(false);
+      render();
+    }
+
+    function clearForm(showMsg = true) {
+      $("nome").value = "";
+      $("ciclo").value = "";
+      $("defasagem").value = "";
+      $("transicao").value = "";
+      $("qtdEstagios").value = "";
+      $("stageFields").innerHTML = `<div class="empty">Os campos dos estágios aparecerão aqui.</div>`;
+      editandoId = null;
+      $("formTitle").textContent = "Novo cruzamento";
+      $("btnSalvar").textContent = "Adicionar à simulação";
+      updateForm();
+      if (showMsg) msg("Cadastro limpo.");
+    }
+
+    function loadForEdit(id) {
+      const c = cruzamentos.find(x => x.id === id);
+      if (!c) return;
+
+      editandoId = id;
+      $("formTitle").textContent = `Editando ${c.nome}`;
+      $("btnSalvar").textContent = "Salvar edição";
+      $("nome").value = c.nome;
+      $("ciclo").value = c.ciclo;
+      $("defasagem").value = c.defasagem;
+      $("transicao").value = c.transicao;
+      $("qtdEstagios").value = c.estagios.length;
+
+      const values = c.estagios.map(e => e.verde);
+      const selected = Math.max(0, c.estagios.findIndex(e => e.testar));
+      generateStageFields(values, selected);
+      msg("Cruzamento carregado para edição.", "ok");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function removeIntersection(id) {
+      cruzamentos = cruzamentos.filter(c => c.id !== id);
+      if (editandoId === id) clearForm(false);
+      render();
+      msg("Cruzamento removido.", "ok");
+    }
+
+    function estagioTeste(c) {
+      return c.estagios.find(e => e.testar) || c.estagios[0];
+    }
+
+    function diffCircular(a, b, ciclo) {
+      const diff = Math.abs(a - b) % ciclo;
+      return Math.min(diff, ciclo - diff);
+    }
+
+    function testeComProximo(a, b) {
+      const ea = estagioTeste(a);
+      const eb = estagioTeste(b);
+      const comum = mmc(a.ciclo, b.ciclo);
+      const abreA = (ea.abreSem + a.defasagem) % comum;
+      const abreB = (eb.abreSem + b.defasagem) % comum;
+      const diff = diffCircular(abreA, abreB, comum);
+      const defIdeal = ((abreA % b.ciclo) - eb.abreSem + b.ciclo) % b.ciclo;
+      const ajuste = (defIdeal - b.defasagem + b.ciclo) % b.ciclo;
+
+      return { ea, eb, comum, abreA, abreB, diff, defIdeal, ajuste, ok: diff === 0 };
+    }
+
+    function allOk() {
+      if (cruzamentos.length < 2) return false;
+      for (let i = 0; i < cruzamentos.length - 1; i++) {
+        if (!testeComProximo(cruzamentos[i], cruzamentos[i + 1]).ok) return false;
+      }
+      return true;
+    }
+
+    function render() {
+      $("qtdCruzamentos").textContent = cruzamentos.length;
+      $("cicloComum").textContent = cruzamentos.length ? `${cicloComum()}s` : "-";
+      $("qtdTestes").textContent = Math.max(0, cruzamentos.length - 1);
+      $("statusGeral").textContent = cruzamentos.length < 2 ? "-" : (allOk() ? "OK" : "Ajustar");
+
+      const list = $("crossList");
+
+      if (!cruzamentos.length) {
+        list.innerHTML = `<div class="empty">Adicione pelo menos dois cruzamentos para testar o sincronismo.</div>`;
+        drawAnimation();
+        return;
+      }
+
+      const cards = cruzamentos.map(c => {
+        const stages = c.estagios.map(e => `
+          <div class="stage-box ${e.testar ? "selected" : ""}">
+            <div class="stage-title">${e.nome}</div>
+            <div class="stage-values">
+              <div class="vd-cell"><span>VD</span><strong>${e.verde}</strong></div>
+              <div class="tr-cell"><span>TR</span><strong>${e.transicao}</strong></div>
+            </div>
+            <div class="open-time">Abre: ${e.abreCom}s</div>
+            ${e.testar ? `<span class="selected-badge">SINCRONIZAR</span>` : ""}
+          </div>
+        `).join("");
+
+        return `
+          <div class="cross-card">
+            <div class="cross-top">
+              <div class="cross-name">Cruzamento ${c.nome}</div>
+              <div class="cross-actions">
+                <button class="btn-soft" data-action="edit" data-id="${c.id}">Editar</button>
+                <button class="btn-red" data-action="remove" data-id="${c.id}">Remover</button>
+              </div>
+            </div>
+
+            <div class="cross-meta">
+              <div class="meta-cell"><strong>${c.ciclo}s</strong><span>Ciclo</span></div>
+              <div class="meta-cell"><strong>${c.defasagem}s</strong><span>Defasagem</span></div>
+              <div class="meta-cell"><strong>${c.transicao}s</strong><span>TR comum</span></div>
+            </div>
+
+            <div class="stage-row">${stages}</div>
+          </div>
+        `;
+      }).join("");
+
+      const syncs = cruzamentos.slice(0, -1).map((c, i) => {
+        const prox = cruzamentos[i + 1];
+        const t = testeComProximo(c, prox);
+
+        return `
+          <div class="sync-box ${t.ok ? "ok" : "bad"}">
+            <div class="sync-title">Teste ${i + 1}: ${c.nome} ${t.ea.nome} × ${prox.nome} ${t.eb.nome}</div>
+            ${c.nome}/${t.ea.nome}: abre em <strong>${t.abreA}s</strong> no ciclo comum.
+            ${prox.nome}/${t.eb.nome}: abre em <strong>${t.abreB}s</strong> no ciclo comum.
+            Diferença: <strong>${t.diff}s</strong>.
+            <div class="suggestion ${t.ok ? "synced" : "need-adjust"}">
+              <div class="suggestion-title">${t.ok ? "✅ Sincronismo ajustado" : "💡 Recomendação de defasagem para sincronismo"}</div>
+
+              <div class="suggestion-main">
+                <span>${t.ok ? "Defasagem correta para o cruzamento " + prox.nome : "Defasagem ideal para o cruzamento " + prox.nome}</span>
+                <strong>${t.defIdeal}s</strong>
+              </div>
+
+              <div class="suggestion-lines">
+                <div class="suggestion-line">
+                  <strong>Objetivo:</strong> fazer o estágio <strong>${prox.nome}/${t.eb.nome}</strong>
+                  abrir junto com <strong>${c.nome}/${t.ea.nome}</strong>.
+                </div>
+
+                <div class="suggestion-line">
+                  <strong>Defasagem atual de ${prox.nome}:</strong> ${prox.defasagem}s
+                </div>
+
+                <div class="suggestion-line">
+                  <strong>O que alterar:</strong>
+                  ${t.ok
+                    ? `<span class="ok-text">não precisa alterar. A defasagem atual já sincroniza este par.</span>`
+                    : `altere somente a <strong>defasagem</strong> do cruzamento <strong>${prox.nome}</strong> de <strong>${prox.defasagem}s</strong> para <strong>${t.defIdeal}s</strong>.`
+                  }
+                </div>
+              </div>
+
+
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      list.innerHTML = cards + syncs;
+      drawAnimation();
+    }
+
+    function loadExample() {
+      cruzamentos = [
+        {
+          id: 1,
+          nome: "A",
+          ciclo: 165,
+          defasagem: 25,
+          transicao: 6,
+          estagios: [
+            { nome: "E1", verde: 62, transicao: 6, abreSem: 0, abreCom: 25, testar: true },
+            { nome: "E2", verde: 40, transicao: 6, abreSem: 68, abreCom: 93, testar: false },
+            { nome: "E3", verde: 45, transicao: 6, abreSem: 114, abreCom: 139, testar: false }
+          ]
+        },
+        {
+          id: 2,
+          nome: "B",
+          ciclo: 165,
+          defasagem: 0,
+          transicao: 6,
+          estagios: [
+            { nome: "E1", verde: 27, transicao: 6, abreSem: 0, abreCom: 0, testar: false },
+            { nome: "E2", verde: 60, transicao: 6, abreSem: 33, abreCom: 33, testar: true },
+            { nome: "E3", verde: 60, transicao: 6, abreSem: 99, abreCom: 99, testar: false }
+          ]
+        },
+        {
+          id: 3,
+          nome: "C",
+          ciclo: 165,
+          defasagem: 125,
+          transicao: 6,
+          estagios: [
+            { nome: "E1", verde: 35, transicao: 6, abreSem: 0, abreCom: 125, testar: false },
+            { nome: "E2", verde: 25, transicao: 6, abreSem: 41, abreCom: 1, testar: false },
+            { nome: "E3", verde: 41, transicao: 6, abreSem: 72, abreCom: 32, testar: true },
+            { nome: "E4", verde: 40, transicao: 6, abreSem: 119, abreCom: 79, testar: false }
+          ]
+        }
+      ];
+      clearForm(false);
+      msg("Exemplo carregado.", "ok");
+      render();
+    }
+
+    function clearAll() {
+      cruzamentos = [];
+      clearForm(false);
+      msg("Todos os cruzamentos foram removidos.", "ok");
+      render();
+    }
+
+    function drawRoundRect(ctx, x, y, w, h, r) {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.arcTo(x + w, y, x + w, y + h, r);
+      ctx.arcTo(x + w, y + h, x, y + h, r);
+      ctx.arcTo(x, y + h, x, y, r);
+      ctx.arcTo(x, y, x + w, y, r);
+      ctx.closePath();
+    }
+
+    function drawAnimation() {
+      const canvas = $("syncCanvas");
+      if (!canvas) return;
+      const ctx = canvas.getContext("2d");
+      const w = canvas.width;
+      const h = canvas.height;
+
+      ctx.clearRect(0, 0, w, h);
+      ctx.fillStyle = "#f8fafc";
+      ctx.fillRect(0, 0, w, h);
+
+      if (!cruzamentos.length) {
+        ctx.fillStyle = "#64748b";
+        ctx.font = "700 22px Arial";
+        ctx.fillText("Adicione cruzamentos para visualizar a animação.", 35, 70);
+        return;
+      }
+
+      const comum = cicloComum() || cruzamentos[0].ciclo;
+      const animar = $("animar") && $("animar").checked;
+      const elapsed = ((performance.now() - animStart) / 1000);
+      const t = animar ? (elapsed * 12) % comum : 0;
+
+      const left = 150;
+      const right = 40;
+      const barW = w - left - right;
+      const rowH = 72;
+      const top = 54;
+
+      ctx.fillStyle = "#172033";
+      ctx.font = "900 22px Arial";
+      ctx.fillText(`Tempo do ciclo: ${Math.round(t)}s / ${comum}s`, 35, 32);
+
+      ctx.strokeStyle = "#d7dee9";
+      ctx.lineWidth = 1;
+
+      for (let i = 0; i <= 5; i++) {
+        const x = left + (barW * i / 5);
+        ctx.beginPath();
+        ctx.moveTo(x, 45);
+        ctx.lineTo(x, h - 28);
+        ctx.stroke();
+
+        ctx.fillStyle = "#64748b";
+        ctx.font = "700 12px Arial";
+        ctx.fillText(`${Math.round(comum * i / 5)}s`, x - 12, h - 10);
+      }
+
+      cruzamentos.forEach((c, idx) => {
+        const y = top + idx * rowH;
+
+        ctx.fillStyle = "#172033";
+        ctx.font = "900 18px Arial";
+        ctx.fillText(`Cruz. ${c.nome}`, 28, y + 31);
+
+        drawRoundRect(ctx, left, y, barW, 30, 12);
+        ctx.fillStyle = "#e2e8f0";
+        ctx.fill();
+
+        c.estagios.forEach(e => {
+          const start = (e.abreSem + c.defasagem) % c.ciclo;
+          const startGlobal = start % comum;
+          const width = Math.max(8, (e.verde / comum) * barW);
+          const x = left + (startGlobal / comum) * barW;
+
+          ctx.fillStyle = e.testar ? "#7c3aed" : "#16a34a";
+          drawRoundRect(ctx, x, y, Math.min(width, left + barW - x), 30, 10);
+          ctx.fill();
+
+          if (x + width > left + barW) {
+            const overflow = (x + width) - (left + barW);
+            drawRoundRect(ctx, left, y, overflow, 30, 10);
+            ctx.fill();
+          }
+
+          ctx.fillStyle = "#ffffff";
+          ctx.font = "900 12px Arial";
+          ctx.fillText(e.nome, x + 6, y + 20);
+        });
+
+        const markerX = left + (t / comum) * barW;
+        ctx.strokeStyle = "#dc2626";
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(markerX, y - 7);
+        ctx.lineTo(markerX, y + 38);
+        ctx.stroke();
+
+        const selected = estagioTeste(c);
+        const open = (selected.abreSem + c.defasagem) % comum;
+        const selectedX = left + (open / comum) * barW;
+
+        ctx.fillStyle = "#f59e0b";
+        ctx.beginPath();
+        ctx.arc(selectedX, y + 46, 6, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = "#64748b";
+        ctx.font = "700 12px Arial";
+        ctx.fillText(`${selected.nome}: ${open}s`, selectedX - 22, y + 64);
+      });
+    }
+
+    function animationLoop() {
+      if (animationVisible) drawAnimation();
+      requestAnimationFrame(animationLoop);
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      $("btnGerar").addEventListener("click", () => generateStageFields());
+      $("btnSalvar").addEventListener("click", saveIntersection);
+      $("btnNovo").addEventListener("click", () => clearForm(true));
+      $("btnExemplo").addEventListener("click", loadExample);
+      $("btnLimparTudo").addEventListener("click", clearAll);
+
+      $("btnToggleAnim").addEventListener("click", () => {
+        animationVisible = !animationVisible;
+        $("animationPanel").classList.toggle("active", animationVisible);
+        $("btnToggleAnim").textContent = animationVisible ? "Ocultar animação" : "Mostrar animação";
+        drawAnimation();
+      });
+
+      $("btnResetAnim").addEventListener("click", () => {
+        animStart = performance.now();
+        drawAnimation();
+      });
+
+      $("animar").addEventListener("change", drawAnimation);
+
+      ["ciclo", "transicao", "qtdEstagios"].forEach(id => {
+        $(id).addEventListener("input", updateForm);
+      });
+
+      $("stageFields").addEventListener("input", (ev) => {
+        if (ev.target.classList.contains("vd-stage")) updateForm();
+      });
+
+      $("stageFields").addEventListener("change", updateForm);
+
+      $("crossList").addEventListener("click", (ev) => {
+        const btn = ev.target.closest("[data-action]");
+        if (!btn) return;
+        const id = Number(btn.dataset.id);
+        if (btn.dataset.action === "edit") loadForEdit(id);
+        if (btn.dataset.action === "remove") removeIntersection(id);
+      });
+
+      updateForm();
+      render();
+      animationLoop();
+    });
+  </script>
+</body>
+</html>
