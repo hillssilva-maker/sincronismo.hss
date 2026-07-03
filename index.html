@@ -961,6 +961,80 @@
       color: #1e293b;
       border: 1px solid #dbe4f0;
     }
+}
+
+  
+    .btn-copy-data {
+      border: 0;
+      border-radius: 14px;
+      padding: 12px 14px;
+      min-height: 44px;
+      cursor: pointer;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--purple), var(--blue));
+      color: #ffffff;
+      box-shadow: 0 8px 18px rgba(124, 58, 237, .20);
+      transition: transform .12s ease, filter .12s ease, opacity .12s ease;
+    }
+
+    .btn-copy-data:not(:disabled):hover {
+      transform: translateY(-1px);
+      filter: brightness(1.03);
+    }
+
+    .btn-copy-data:disabled {
+      background: #d7dee9;
+      color: #64748b;
+      cursor: not-allowed;
+      box-shadow: none;
+      opacity: .8;
+    }
+
+    .copy-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, .48);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      z-index: 9999;
+    }
+
+    .copy-modal.show {
+      display: flex;
+    }
+
+    .copy-modal-card {
+      width: min(560px, 100%);
+      background: #ffffff;
+      border-radius: 22px;
+      border: 1px solid var(--line);
+      box-shadow: 0 24px 70px rgba(15, 23, 42, .25);
+      padding: 18px;
+    }
+
+    .copy-modal-title {
+      font-size: 1.18rem;
+      font-weight: 900;
+      color: var(--ink);
+      margin-bottom: 8px;
+    }
+
+    .copy-modal-text {
+      color: var(--muted);
+      font-weight: 700;
+      line-height: 1.4;
+      margin-bottom: 12px;
+    }
+
+    .copy-modal-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
 
   </style>
 </head>
@@ -1027,6 +1101,7 @@
           <div class="btns">
             <button class="btn-green" id="btnSalvar">Adicionar à simulação</button>
             <button class="btn-soft" id="btnNovo">Limpar cadastro</button>
+            <button class="btn-copy-data" id="btnCopyData" type="button" disabled>Copiar Dados</button>
           </div>
 
           <div id="message" class="message">Preencha os dados e gere os estágios.</div>
@@ -1278,6 +1353,8 @@
       }
 
       clearForm(false);
+      
+      atualizarBotaoCopiarDados();
       render();
     }
 
@@ -1352,7 +1429,90 @@
       return true;
     }
 
+    function atualizarBotaoCopiarDados() {
+      const btn = $("btnCopyData");
+      if (!btn) return;
+
+      const liberado = Array.isArray(cruzamentos) && cruzamentos.length > 0;
+      btn.disabled = !liberado;
+      btn.title = liberado
+        ? "Copiar dados de um cruzamento já inserido"
+        : "Adicione pelo menos um cruzamento para liberar este botão";
+    }
+
+    function abrirCopiarDados() {
+      if (!cruzamentos.length) {
+        msg("Adicione pelo menos um cruzamento antes de copiar dados.", "bad");
+        atualizarBotaoCopiarDados();
+        return;
+      }
+
+      const modal = $("copyModal");
+      const select = $("copyDataSelect");
+      if (!modal || !select) return;
+
+      select.innerHTML = '<option value="">Selecione um cruzamento...</option>' +
+        cruzamentos.map(c => {
+          return `<option value="${c.id}">${c.nome} — Ciclo ${c.ciclo}s, Defasagem ${c.defasagem}s, ${c.estagios.length} estágio(s)</option>`;
+        }).join("");
+
+      modal.classList.add("show");
+      modal.setAttribute("aria-hidden", "false");
+      setTimeout(() => select.focus(), 80);
+    }
+
+    function fecharCopiarDados() {
+      const modal = $("copyModal");
+      if (!modal) return;
+      modal.classList.remove("show");
+      modal.setAttribute("aria-hidden", "true");
+    }
+
+    function confirmarCopiarDados() {
+      const select = $("copyDataSelect");
+      if (!select || !select.value) {
+        msg("Selecione um cruzamento para copiar.", "bad");
+        return;
+      }
+
+      const original = cruzamentos.find(c => String(c.id) === String(select.value));
+      if (!original) {
+        msg("Cruzamento selecionado não encontrado.", "bad");
+        return;
+      }
+
+      editandoId = null;
+
+      $("nome").value = original.nome + " Cópia";
+      $("ciclo").value = original.ciclo;
+      $("defasagem").value = original.defasagem;
+      $("transicao").value = original.transicao;
+      $("qtdEstagios").value = original.estagios.length;
+
+      const verdes = original.estagios.map(e => e.verde);
+      const marcado = Math.max(0, original.estagios.findIndex(e => e.testar));
+      generateStageFields(verdes, marcado);
+
+      $("formTitle").textContent = "Novo cruzamento";
+      $("btnSalvar").textContent = "Adicionar à simulação";
+
+      fecharCopiarDados();
+      msg("Dados copiados para o cadastro. Edite o que precisar e depois clique em Adicionar à simulação.", "ok");
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
+
+      const nome = $("nome");
+      if (nome) {
+        setTimeout(() => {
+          nome.focus();
+          nome.select();
+        }, 250);
+      }
+    }
+
     function render() {
+      
+      
       $("qtdCruzamentos").textContent = cruzamentos.length;
       $("cicloComum").textContent = cruzamentos.length ? `${cicloComum()}s` : "-";
       $("qtdTestes").textContent = Math.max(0, cruzamentos.length - 1);
@@ -1691,6 +1851,22 @@
         $("nome").value = capitalizarNomeCruzamento($("nome").value);
       });
 
+      const btnCopyData = $("btnCopyData");
+      if (btnCopyData) btnCopyData.addEventListener("click", abrirCopiarDados);
+
+      const btnCancelCopy = $("btnCancelCopy");
+      if (btnCancelCopy) btnCancelCopy.addEventListener("click", fecharCopiarDados);
+
+      const btnConfirmCopy = $("btnConfirmCopy");
+      if (btnConfirmCopy) btnConfirmCopy.addEventListener("click", confirmarCopiarDados);
+
+      const copyModal = $("copyModal");
+      if (copyModal) {
+        copyModal.addEventListener("click", (ev) => {
+          if (ev.target === copyModal) fecharCopiarDados();
+        });
+      }
+
       $("btnGerar").addEventListener("click", () => generateStageFields());
       $("btnSalvar").addEventListener("click", saveIntersection);
       $("btnNovo").addEventListener("click", () => clearForm(true));
@@ -1730,9 +1906,32 @@
       });
 
       updateForm();
+      atualizarBotaoCopiarDados();
       render();
       animationLoop();
     });
   </script>
+
+  <div class="copy-modal" id="copyModal" aria-hidden="true">
+    <div class="copy-modal-card">
+      <div class="copy-modal-title">📋 Copiar Dados</div>
+      <div class="copy-modal-text">
+        Escolha qual cruzamento já inserido você deseja copiar. Os dados serão carregados no cadastro para você editar antes de adicionar novamente à simulação.
+      </div>
+
+      <label>
+        Cruzamento para copiar
+        <select id="copyDataSelect">
+          <option value="">Selecione um cruzamento...</option>
+        </select>
+      </label>
+
+      <div class="copy-modal-actions">
+        <button class="btn-soft" type="button" id="btnCancelCopy">Cancelar</button>
+        <button class="btn-copy-data" type="button" id="btnConfirmCopy">Copiar para o cadastro</button>
+      </div>
+    </div>
+  </div>
+
 </body>
 </html>
