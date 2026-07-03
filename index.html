@@ -683,7 +683,7 @@
     canvas {
       width: 100%;
       min-width: 620px;
-      height: 340px;
+      height: auto;
       background: #f8fafc;
       border: 1px solid var(--line);
       border-radius: 16px;
@@ -693,7 +693,6 @@
     @media (max-width: 560px) {
       canvas {
         min-width: 560px;
-        height: 300px;
       }
     }
 
@@ -1538,6 +1537,15 @@
       if (!canvas) return;
       const ctx = canvas.getContext("2d");
       const w = canvas.width;
+
+      const rowH = 120;
+      const top = 76;
+      const bottom = 70;
+      const neededH = Math.max(460, top + cruzamentos.length * rowH + bottom);
+      if (canvas.height !== neededH) {
+        canvas.height = neededH;
+      }
+
       const h = canvas.height;
 
       ctx.clearRect(0, 0, w, h);
@@ -1556,11 +1564,18 @@
       const elapsed = ((performance.now() - animStart) / 1000);
       const t = animar ? (elapsed * 12) % comum : 0;
 
-      const left = 150;
+      const left = 38;
       const right = 40;
       const barW = w - left - right;
-      const rowH = 72;
-      const top = 54;
+
+      function textoLimitado(texto, maxWidth) {
+        if (ctx.measureText(texto).width <= maxWidth) return texto;
+        let t = texto;
+        while (t.length > 4 && ctx.measureText(t + "...").width > maxWidth) {
+          t = t.slice(0, -1);
+        }
+        return t + "...";
+      }
 
       ctx.fillStyle = "#172033";
       ctx.font = "900 22px Arial";
@@ -1569,26 +1584,42 @@
       ctx.strokeStyle = "#d7dee9";
       ctx.lineWidth = 1;
 
+      const gridTop = 54;
+      const gridBottom = h - 32;
+
       for (let i = 0; i <= 5; i++) {
         const x = left + (barW * i / 5);
         ctx.beginPath();
-        ctx.moveTo(x, 45);
-        ctx.lineTo(x, h - 28);
+        ctx.moveTo(x, gridTop);
+        ctx.lineTo(x, gridBottom);
         ctx.stroke();
 
         ctx.fillStyle = "#64748b";
         ctx.font = "700 12px Arial";
-        ctx.fillText(`${Math.round(comum * i / 5)}s`, x - 12, h - 10);
+        ctx.fillText(`${Math.round(comum * i / 5)}s`, x - 12, h - 12);
       }
 
       cruzamentos.forEach((c, idx) => {
-        const y = top + idx * rowH;
+        const rowTop = top + idx * rowH;
+        const barY = rowTop + 30;
 
-        ctx.fillStyle = "#172033";
-        ctx.font = "900 18px Arial";
-        ctx.fillText(`Cruz. ${c.nome}`, 28, y + 31);
+        const label = `🚦 Cruzamento ${c.nome}`;
+        ctx.font = "900 16px Arial";
+        const labelText = textoLimitado(label, barW - 22);
+        const labelW = Math.min(barW, ctx.measureText(labelText).width + 22);
 
-        drawRoundRect(ctx, left, y, barW, 30, 12);
+        drawRoundRect(ctx, left, rowTop, labelW, 24, 12);
+        ctx.fillStyle = "#ffffff";
+        ctx.fill();
+        ctx.strokeStyle = "#dbe4f0";
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        ctx.fillStyle = "#0f172a";
+        ctx.font = "900 16px Arial";
+        ctx.fillText(labelText, left + 11, rowTop + 17);
+
+        drawRoundRect(ctx, left, barY, barW, 30, 12);
         ctx.fillStyle = "#e2e8f0";
         ctx.fill();
 
@@ -1599,26 +1630,26 @@
           const x = left + (startGlobal / comum) * barW;
 
           ctx.fillStyle = e.testar ? "#7c3aed" : "#16a34a";
-          drawRoundRect(ctx, x, y, Math.min(width, left + barW - x), 30, 10);
+          drawRoundRect(ctx, x, barY, Math.min(width, left + barW - x), 30, 10);
           ctx.fill();
 
           if (x + width > left + barW) {
             const overflow = (x + width) - (left + barW);
-            drawRoundRect(ctx, left, y, overflow, 30, 10);
+            drawRoundRect(ctx, left, barY, overflow, 30, 10);
             ctx.fill();
           }
 
           ctx.fillStyle = "#ffffff";
           ctx.font = "900 12px Arial";
-          ctx.fillText(e.nome, x + 6, y + 20);
+          ctx.fillText(e.nome, x + 6, barY + 20);
         });
 
         const markerX = left + (t / comum) * barW;
         ctx.strokeStyle = "#dc2626";
         ctx.lineWidth = 3;
         ctx.beginPath();
-        ctx.moveTo(markerX, y - 7);
-        ctx.lineTo(markerX, y + 38);
+        ctx.moveTo(markerX, barY - 7);
+        ctx.lineTo(markerX, barY + 38);
         ctx.stroke();
 
         const selected = estagioTeste(c);
@@ -1627,12 +1658,26 @@
 
         ctx.fillStyle = "#f59e0b";
         ctx.beginPath();
-        ctx.arc(selectedX, y + 46, 6, 0, Math.PI * 2);
+        ctx.arc(selectedX, barY + 52, 6, 0, Math.PI * 2);
         ctx.fill();
 
-        ctx.fillStyle = "#64748b";
-        ctx.font = "700 12px Arial";
-        ctx.fillText(`${selected.nome}: ${open}s`, selectedX - 22, y + 64);
+        ctx.fillStyle = "#475569";
+        ctx.font = "800 12px Arial";
+        const selectedLabel = `${selected.nome}: ${open}s`;
+        const textW = ctx.measureText(selectedLabel).width;
+        let labelX = selectedX - textW / 2;
+        labelX = Math.max(left, Math.min(labelX, left + barW - textW));
+        const labelY = barY + 78;
+        drawRoundRect(ctx, labelX - 6, labelY - 16, textW + 12, 22, 10);
+        ctx.fillStyle = "#ffffff";
+        ctx.fill();
+        ctx.strokeStyle = "#dbe4f0";
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        ctx.fillStyle = "#475569";
+        ctx.font = "800 12px Arial";
+        ctx.fillText(selectedLabel, labelX, labelY);
       });
     }
 
