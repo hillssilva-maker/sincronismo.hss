@@ -1147,6 +1147,33 @@
       color: #e5e7eb;
     }
 
+  
+    .open-diff-message {
+      margin-bottom: 10px;
+      padding: 12px;
+      border-radius: 15px;
+      border: 1px solid #dbe4f0;
+      background: linear-gradient(135deg, #ffffff, #f8fbff);
+      font-weight: 900;
+      color: #0f172a;
+      line-height: 1.45;
+    }
+
+    .open-diff-message .before {
+      color: #2563eb;
+      font-weight: 900;
+    }
+
+    .open-diff-message .after {
+      color: #7c3aed;
+      font-weight: 900;
+    }
+
+    .open-diff-message .together {
+      color: #16a34a;
+      font-weight: 900;
+    }
+
   </style>
 </head>
 
@@ -1621,6 +1648,37 @@
       }
     }
 
+
+    function descricaoDiferencaAbertura(t, c, prox) {
+      const nomeA = `${c.nome} / ${t.ea.nome}`;
+      const nomeB = `${prox.nome} / ${t.eb.nome}`;
+
+      if (t.diff === 0) {
+        return `<span class="together">Ambos abrem simultaneamente:</span> <strong>${nomeA}</strong> e <strong>${nomeB}</strong>.`;
+      }
+
+      if (t.abreA < t.abreB) {
+        return `<strong>${nomeA}</strong> abrirá <span class="before">${t.diff}s antes</span> de <strong>${nomeB}</strong>.`;
+      }
+
+      return `<strong>${nomeA}</strong> abrirá <span class="after">${t.diff}s depois</span> de <strong>${nomeB}</strong>.`;
+    }
+
+    function textoDiferencaGrafico(t, c, prox) {
+      const nomeA = `${c.nome}/${t.ea.nome}`;
+      const nomeB = `${prox.nome}/${t.eb.nome}`;
+
+      if (t.diff === 0) {
+        return `${nomeA} e ${nomeB}: abrem simultaneamente`;
+      }
+
+      if (t.abreA < t.abreB) {
+        return `${nomeA}: ${t.diff}s antes de ${nomeB}`;
+      }
+
+      return `${nomeA}: ${t.diff}s depois de ${nomeB}`;
+    }
+
     function render() {
       
       
@@ -1698,8 +1756,12 @@
                 </div>
               </div>
 
+              <div class="open-diff-message">
+                ${descricaoDiferencaAbertura(t, c, prox)}
+              </div>
+
               <div class="sync-diff">
-                <span>Diferença entre aberturas</span>
+                <span>Diferença de abertura</span>
                 <strong>${t.diff}s</strong>
               </div>
 
@@ -1810,9 +1872,10 @@
       const w = canvas.width;
 
       const rowH = 120;
-      const top = 76;
+      const diffPanelH = cruzamentos.length > 1 ? Math.min(118, 42 + (cruzamentos.length - 1) * 24) : 0;
+      const top = 76 + diffPanelH;
       const bottom = 70;
-      const neededH = Math.max(460, top + cruzamentos.length * rowH + bottom);
+      const neededH = Math.max(500, top + cruzamentos.length * rowH + bottom);
       if (canvas.height !== neededH) {
         canvas.height = neededH;
       }
@@ -1848,14 +1911,76 @@
         return t + "...";
       }
 
+      function quebrarTexto(texto, maxWidth) {
+        const palavras = String(texto).split(" ");
+        const linhas = [];
+        let linha = "";
+
+        palavras.forEach(p => {
+          const teste = linha ? linha + " " + p : p;
+          if (ctx.measureText(teste).width <= maxWidth) {
+            linha = teste;
+          } else {
+            if (linha) linhas.push(linha);
+            linha = p;
+          }
+        });
+
+        if (linha) linhas.push(linha);
+        return linhas;
+      }
+
       ctx.fillStyle = "#172033";
       ctx.font = "900 22px Arial";
       ctx.fillText(`Tempo do ciclo: ${Math.round(t)}s / ${comum}s`, 35, 32);
 
+      if (cruzamentos.length > 1) {
+        const linhasDiff = [];
+        for (let i = 0; i < cruzamentos.length - 1; i++) {
+          const a = cruzamentos[i];
+          const b = cruzamentos[i + 1];
+          const teste = testeComProximo(a, b);
+          if (teste) linhasDiff.push(textoDiferencaGrafico(teste, a, b));
+        }
+
+        const panelX = left;
+        const panelY = 46;
+        const panelW = barW;
+        const panelH = Math.max(50, Math.min(diffPanelH - 8, 106));
+
+        drawRoundRect(ctx, panelX, panelY, panelW, panelH, 16);
+        ctx.fillStyle = "#ffffff";
+        ctx.fill();
+        ctx.strokeStyle = "#dbe4f0";
+        ctx.lineWidth = 1;
+        ctx.stroke();
+
+        ctx.fillStyle = "#0f172a";
+        ctx.font = "900 14px Arial";
+        ctx.fillText("Diferença de abertura entre cruzamentos", panelX + 14, panelY + 20);
+
+        ctx.font = "800 12px Arial";
+        ctx.fillStyle = "#475569";
+
+        let y = panelY + 40;
+        linhasDiff.slice(0, 3).forEach(txt => {
+          const linhas = quebrarTexto(txt, panelW - 32);
+          if (linhas.length) {
+            ctx.fillText("• " + linhas[0], panelX + 14, y);
+            y += 20;
+          }
+        });
+
+        if (linhasDiff.length > 3) {
+          ctx.fillStyle = "#64748b";
+          ctx.fillText(`• + ${linhasDiff.length - 3} comparação(ões)`, panelX + 14, y);
+        }
+      }
+
       ctx.strokeStyle = "#d7dee9";
       ctx.lineWidth = 1;
 
-      const gridTop = 54;
+      const gridTop = Math.max(54, top - 18);
       const gridBottom = h - 32;
 
       for (let i = 0; i <= 5; i++) {
