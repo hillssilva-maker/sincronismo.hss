@@ -1322,6 +1322,310 @@
       background: #ffffff;
     }
 
+  
+    .animation-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      display: none;
+      background: rgba(2, 6, 23, .72);
+      backdrop-filter: blur(6px);
+      padding: 18px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .animation-modal.show {
+      display: flex;
+    }
+
+    .animation-modal-card {
+      width: min(1180px, 100%);
+      max-height: min(92vh, 920px);
+      background: #ffffff;
+      border-radius: 24px;
+      box-shadow: 0 28px 90px rgba(0,0,0,.42);
+      border: 1px solid rgba(203,213,225,.6);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .animation-modal-header {
+      background: linear-gradient(135deg, #0f172a, #1d4ed8);
+      color: #ffffff;
+      padding: 14px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .animation-modal-title {
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-size: 1.04rem;
+    }
+
+    .animation-modal-close {
+      width: 40px;
+      height: 40px;
+      border: 0;
+      border-radius: 999px;
+      background: rgba(255,255,255,.16);
+      color: #ffffff;
+      font-weight: 900;
+      cursor: pointer;
+      font-size: 1.25rem;
+    }
+
+    .animation-modal-body {
+      padding: 14px;
+      overflow: auto;
+      background: #f8fafc;
+    }
+
+    .animation-floating-btn {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 9000;
+      display: none;
+      border: 0;
+      border-radius: 999px;
+      padding: 13px 16px;
+      background: linear-gradient(135deg, #7c3aed, #2563eb);
+      color: #ffffff;
+      font-weight: 900;
+      box-shadow: 0 16px 36px rgba(37, 99, 235, .32);
+      cursor: pointer;
+    }
+
+    .animation-floating-btn.show {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .animation-holder {
+      overflow: auto;
+      border-radius: 18px;
+      background: #ffffff;
+      padding: 10px;
+      border: 1px solid #dbe4f0;
+    }
+
+    #animationPanel,
+    #animPanel,
+    .animation-panel:empty,
+    .canvas-panel:empty {
+      display: none !important;
+    }
+
+    @media (max-width: 720px) {
+      .animation-modal {
+        padding: 8px;
+        align-items: stretch;
+      }
+
+      .animation-modal-card {
+        max-height: 96vh;
+        border-radius: 18px;
+      }
+
+      .animation-modal-header {
+        padding: 12px;
+      }
+
+      .animation-modal-title {
+        font-size: .95rem;
+      }
+
+      .animation-modal-body {
+        padding: 8px;
+      }
+
+      .animation-holder {
+        padding: 6px;
+      }
+
+      .animation-floating-btn {
+        left: 12px;
+        right: 12px;
+        bottom: 12px;
+        justify-content: center;
+        border-radius: 16px;
+      }
+    }
+
+  
+    /* Mini janela aprimorada da animação */
+    .animation-modal {
+      align-items: center !important;
+      justify-content: center !important;
+      padding: 14px !important;
+    }
+
+    .animation-modal-card {
+      width: min(900px, 94vw) !important;
+      height: min(680px, 82vh) !important;
+      max-height: 82vh !important;
+      border-radius: 22px !important;
+      display: flex !important;
+      flex-direction: column !important;
+    }
+
+    .animation-modal.maximized .animation-modal-card {
+      width: min(1360px, 98vw) !important;
+      height: 96vh !important;
+      max-height: 96vh !important;
+      border-radius: 18px !important;
+    }
+
+    .animation-modal-header {
+      flex: 0 0 auto;
+    }
+
+    .animation-modal-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .animation-control-btn {
+      border: 0;
+      border-radius: 999px;
+      min-width: 40px;
+      height: 40px;
+      padding: 0 12px;
+      background: rgba(255,255,255,.16);
+      color: #ffffff;
+      font-weight: 900;
+      cursor: pointer;
+      font-size: .92rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .animation-control-btn:hover {
+      background: rgba(255,255,255,.25);
+    }
+
+    .animation-control-btn.close {
+      font-size: 1.25rem;
+      width: 40px;
+      padding: 0;
+    }
+
+    .animation-modal-body {
+      flex: 1 1 auto;
+      overflow: hidden !important;
+      display: flex;
+      padding: 10px !important;
+      background: #f8fafc;
+    }
+
+    .animation-holder {
+      width: 100%;
+      height: 100%;
+      overflow: hidden !important;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #ffffff;
+      border-radius: 16px;
+      border: 1px solid #dbe4f0;
+      padding: 8px;
+    }
+
+    .animation-holder canvas,
+    #syncCanvasModal {
+      width: 100% !important;
+      max-width: 100% !important;
+      min-width: 0 !important;
+      height: auto !important;
+      max-height: 100% !important;
+      object-fit: contain;
+      display: block;
+      border-radius: 12px;
+      background: #f8fafc;
+    }
+
+    @media (max-width: 720px) {
+      .animation-modal {
+        padding: 8px !important;
+      }
+
+      .animation-modal-card {
+        width: 96vw !important;
+        height: 78vh !important;
+        max-height: 78vh !important;
+        border-radius: 18px !important;
+      }
+
+      .animation-modal.maximized .animation-modal-card {
+        width: 98vw !important;
+        height: 96vh !important;
+        max-height: 96vh !important;
+      }
+
+      .animation-modal-header {
+        padding: 10px !important;
+      }
+
+      .animation-modal-title {
+        font-size: .88rem !important;
+      }
+
+      .animation-modal-actions {
+        gap: 6px;
+      }
+
+      .animation-control-btn {
+        height: 36px;
+        min-width: 36px;
+        padding: 0 9px;
+        font-size: .78rem;
+      }
+
+      .animation-control-btn span {
+        display: none;
+      }
+
+      .animation-control-btn.close {
+        width: 36px;
+      }
+
+      .animation-holder {
+        padding: 5px;
+      }
+    }
+
+  
+    .animation-modal-actions {
+      gap: 14px !important;
+    }
+
+    .animation-control-btn {
+      margin-left: 2px;
+      margin-right: 2px;
+      min-width: 44px !important;
+    }
+
+    @media (max-width: 720px) {
+      .animation-modal-actions {
+        gap: 10px !important;
+      }
+
+      .animation-control-btn {
+        min-width: 40px !important;
+      }
+    }
+
   </style>
 </head>
 
@@ -1399,7 +1703,7 @@
           <div class="card-head">
             <h2>Simulação dos cruzamentos</h2>
             <div class="btns" style="margin:0;">
-              <button class="btn-purple" id="btnToggleAnim">Mostrar animação</button>
+              <button class="btn-purple" id="btnToggleAnim">Abrir animação</button>
               <button class="btn-soft" id="btnExemplo">Exemplo</button>
               <button class="btn-red" id="btnLimparTudo">Limpar tudo</button>
             </div>
@@ -1442,6 +1746,8 @@
     let editandoId = null;
     let animationVisible = false;
     let animStart = performance.now();
+    let animationPaused = false;
+    let animationPausedElapsed = 0;
 
     function num(v) {
       if (v === "" || v === null || v === undefined) return 0;
@@ -1837,7 +2143,61 @@
       return `${nomeA}: ${t.diff}s depois de ${nomeB}`;
     }
 
+
+    function abrirModalAnimacao() {
+      const modal = $("animationModal");
+      if (!modal) return;
+      animationVisible = true;
+      modal.classList.add("show");
+      modal.setAttribute("aria-hidden", "false");
+      const btn = $("btnPauseAnimation");
+      if (btn) btn.innerHTML = animationPaused ? "▶ <span>Continuar</span>" : "⏸ <span>Pausar</span>";
+      requestAnimationFrame(() => drawAnimation());
+    }
+
+    function fecharModalAnimacao() {
+      const modal = $("animationModal");
+      if (!modal) return;
+      animationVisible = false;
+      modal.classList.remove("show");
+      modal.classList.remove("maximized");
+      modal.setAttribute("aria-hidden", "true");
+      requestAnimationFrame(() => drawAnimation());
+    }
+
+    function alternarPausaAnimacao() {
+      const btn = $("btnPauseAnimation");
+      if (!animationPaused) {
+        animationPausedElapsed = (performance.now() - animStart) / 1000;
+        animationPaused = true;
+        if (btn) btn.innerHTML = "▶ <span>Continuar</span>";
+      } else {
+        animStart = performance.now() - animationPausedElapsed * 1000;
+        animationPaused = false;
+        if (btn) btn.innerHTML = "⏸ <span>Pausar</span>";
+      }
+      drawAnimation();
+    }
+
+    function alternarMaximizarAnimacao() {
+      const modal = $("animationModal");
+      const btn = $("btnMaxAnimation");
+      if (!modal) return;
+      modal.classList.toggle("maximized");
+      const maximizado = modal.classList.contains("maximized");
+      if (btn) btn.innerHTML = maximizado ? "🗗 <span>Restaurar</span>" : "⛶ <span>Maximizar</span>";
+      requestAnimationFrame(() => drawAnimation());
+    }
+
+    function atualizarBotaoFlutuanteAnimacao() {
+      const btn = $("btnOpenAnimationFloat");
+      if (!btn) return;
+      if (cruzamentos && cruzamentos.length > 0) btn.classList.add("show");
+      else btn.classList.remove("show");
+    }
+
     function render() {
+      atualizarBotaoFlutuanteAnimacao();
       
       
       $("qtdCruzamentos").textContent = cruzamentos.length;
@@ -1869,7 +2229,7 @@
         return `
           <div class="cross-card">
             <div class="cross-top">
-              <div class="cross-name">Cruzamento ${c.nome}</div>
+              <div class="cross-name">${c.nome}</div>
               <div class="cross-actions">
                 <button class="btn-soft" data-action="edit" data-id="${c.id}">Editar</button>
                 <button class="btn-red" data-action="remove" data-id="${c.id}">Remover</button>
@@ -1926,7 +2286,7 @@
 
               <div class="recommend-option-title">
                 <span class="option-number">Opção 1</span>
-                <span class="option-action">Ajustar o segundo cruzamento</span>
+                <span class="option-action">Ajustar ${prox.nome}</span>
               </div>
               <div class="suggestion ${t.ok ? "synced" : "need-adjust"}">
                 <div class="suggestion-title">${t.ok ? "✅ Sincronismo ajustado" : "💡 Recomendação de defasagem para sincronismo"}</div>
@@ -1964,7 +2324,7 @@
 
               <div class="recommend-option-title">
                 <span class="option-number">Opção 2</span>
-                <span class="option-action">Ajustar o primeiro cruzamento</span>
+                <span class="option-action">Ajustar ${c.nome}</span>
               </div>
               <div class="suggestion ${t.ok ? "synced" : "alt-adjust"}">
                 <div class="suggestion-title">${t.ok ? "✅ Sincronismo ajustado" : "🔁 Ajuste alternativo de defasagem"}</div>
@@ -2071,16 +2431,25 @@
     }
 
     function drawAnimation() {
-      const canvas = $("syncCanvas");
+      const modalEl = $("animationModal");
+      const modalAberto = modalEl && modalEl.classList.contains("show");
+      const modalMaximizado = modalEl && modalEl.classList.contains("maximized");
+      const canvas = modalAberto ? $("syncCanvasModal") : $("syncCanvas");
       if (!canvas) return;
+
+      if (modalAberto) {
+        const targetW = modalMaximizado ? 1300 : 1050;
+        if (canvas.width !== targetW) canvas.width = targetW;
+      }
+
       const ctx = canvas.getContext("2d");
       const w = canvas.width;
 
-      const rowH = 145;
+      const rowH = 165;
       const diffPanelH = cruzamentos.length > 1 ? Math.min(118, 42 + (cruzamentos.length - 1) * 24) : 0;
       const top = 76 + diffPanelH;
       const bottom = 70;
-      const neededH = Math.max(500, top + cruzamentos.length * rowH + bottom);
+      const neededH = Math.max(540, top + cruzamentos.length * rowH + bottom);
       if (canvas.height !== neededH) {
         canvas.height = neededH;
       }
@@ -2100,7 +2469,7 @@
 
       const comum = cicloComum() || cruzamentos[0].ciclo;
       const animar = $("animar") && $("animar").checked;
-      const elapsed = ((performance.now() - animStart) / 1000);
+      const elapsed = animationPaused ? animationPausedElapsed : ((performance.now() - animStart) / 1000);
       const t = animar ? (elapsed * 12) % comum : 0;
 
       const left = 38;
@@ -2140,32 +2509,9 @@
         let maxX = Math.max(x1, x2);
         const larguraReal = maxX - minX;
 
-        if (isSimultaneo) {
-          ctx.fillStyle = "#16a34a";
-          ctx.beginPath();
-          ctx.arc(x1, y, 7, 0, Math.PI * 2);
-          ctx.fill();
-
-          const label = "0s";
-          ctx.font = "900 12px Arial";
-          const tw = ctx.measureText(label).width;
-          let labelX = Math.max(left + 4, Math.min(x1 - tw / 2, left + barW - tw - 4));
-
-          drawRoundRect(ctx, labelX - 8, y - 32, tw + 16, 22, 10);
-          ctx.fillStyle = "#ffffff";
-          ctx.fill();
-          ctx.strokeStyle = "#16a34a";
-          ctx.lineWidth = 1.5;
-          ctx.stroke();
-
-          ctx.fillStyle = "#16a34a";
-          ctx.fillText(label, labelX, y - 16);
-          return;
-        }
-
-        // Quando a diferença é muito pequena no gráfico, como 1s,
-        // aumenta visualmente a barra para não parecer abertura simultânea.
-        if (larguraReal < 34) {
+        // Mantém uma distância visual mínima quando a diferença for pequena,
+        // mas sem transformar 1s em simultâneo.
+        if (!isSimultaneo && larguraReal < 34) {
           const centro = (x1 + x2) / 2;
           minX = Math.max(left, centro - 17);
           maxX = Math.min(left + barW, centro + 17);
@@ -2178,44 +2524,40 @@
 
         ctx.strokeStyle = cor;
         ctx.fillStyle = cor;
-        ctx.lineWidth = 3;
 
-        ctx.beginPath();
-        ctx.moveTo(minX, y);
-        ctx.lineTo(maxX, y);
-        ctx.stroke();
+        if (isSimultaneo) {
+          // Para 0s, mostra apenas um traço central e o valor.
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.moveTo(x1, y - 10);
+          ctx.lineTo(x1, y + 10);
+          ctx.stroke();
+        } else {
+          // Traços verticais marcando os dois pontos de abertura.
+          ctx.lineWidth = 2.5;
+          ctx.beginPath();
+          ctx.moveTo(x1, y - 10);
+          ctx.lineTo(x1, y + 10);
+          ctx.moveTo(x2, y - 10);
+          ctx.lineTo(x2, y + 10);
+          ctx.stroke();
 
-        const ponta = 8;
-
-        ctx.beginPath();
-        ctx.moveTo(minX, y);
-        ctx.lineTo(minX + ponta, y - ponta / 1.4);
-        ctx.lineTo(minX + ponta, y + ponta / 1.4);
-        ctx.closePath();
-        ctx.fill();
-
-        ctx.beginPath();
-        ctx.moveTo(maxX, y);
-        ctx.lineTo(maxX - ponta, y - ponta / 1.4);
-        ctx.lineTo(maxX - ponta, y + ponta / 1.4);
-        ctx.closePath();
-        ctx.fill();
-
-        ctx.setLineDash([5, 5]);
-        ctx.lineWidth = 1.3;
-        ctx.beginPath();
-        ctx.moveTo(x1, y - 10);
-        ctx.lineTo(x1, y + 10);
-        ctx.moveTo(x2, y - 10);
-        ctx.lineTo(x2, y + 10);
-        ctx.stroke();
-        ctx.setLineDash([]);
+          // Linha simples de distância, sem pontas de seta.
+          ctx.setLineDash([5, 6]);
+          ctx.lineWidth = 1.6;
+          ctx.beginPath();
+          ctx.moveTo(minX, y);
+          ctx.lineTo(maxX, y);
+          ctx.stroke();
+          ctx.setLineDash([]);
+        }
 
         ctx.font = "900 12px Arial";
         const tw = ctx.measureText(texto).width;
-        let labelX = Math.max(left + 4, Math.min((minX + maxX) / 2 - tw / 2, left + barW - tw - 4));
+        const centerX = isSimultaneo ? x1 : (minX + maxX) / 2;
+        let labelX = Math.max(left + 4, Math.min(centerX - tw / 2, left + barW - tw - 4));
 
-        drawRoundRect(ctx, labelX - 8, y - 32, tw + 16, 22, 10);
+        drawRoundRect(ctx, labelX - 8, y - 30, tw + 16, 22, 10);
         ctx.fillStyle = "#ffffff";
         ctx.fill();
         ctx.strokeStyle = cor;
@@ -2223,14 +2565,14 @@
         ctx.stroke();
 
         ctx.fillStyle = cor;
-        ctx.fillText(texto, labelX, y - 16);
+        ctx.fillText(texto, labelX, y - 14);
       }
 
       cruzamentos.forEach((c, idx) => {
         const rowTop = top + idx * rowH;
         const barY = rowTop + 30;
 
-        const label = `🚦 Cruzamento ${c.nome}`;
+        const label = `🚦 ${c.nome}`;
         ctx.font = "900 16px Arial";
         const labelText = textoLimitado(label, barW - 22);
         const labelW = Math.min(barW, ctx.measureText(labelText).width + 22);
@@ -2285,7 +2627,7 @@
 
         ctx.fillStyle = "#f59e0b";
         ctx.beginPath();
-        ctx.arc(selectedX, barY + 48, 6, 0, Math.PI * 2);
+        ctx.arc(selectedX, barY + 56, 6, 0, Math.PI * 2);
         ctx.fill();
 
         ctx.fillStyle = "#475569";
@@ -2294,7 +2636,7 @@
         const textW = ctx.measureText(selectedLabel).width;
         let labelX = selectedX - textW / 2;
         labelX = Math.max(left, Math.min(labelX, left + barW - textW));
-        const labelY = barY + 68;
+        const labelY = barY + 84;
         drawRoundRect(ctx, labelX - 6, labelY - 16, textW + 12, 22, 10);
         ctx.fillStyle = "#ffffff";
         ctx.fill();
@@ -2322,7 +2664,7 @@
           const xA = left + (teste.abreA / comum) * barW;
           const xB = left + (teste.abreB / comum) * barW;
 
-          const ySeta = barYA + 105;
+          const ySeta = barYA + 132;
           const isSimultaneo = teste.diff === 0;
           const corSeta = isSimultaneo ? "#16a34a" : (teste.abreA < teste.abreB ? "#2563eb" : "#dc2626");
           const textoSeta = `${teste.diff}s`;
@@ -2358,21 +2700,49 @@
         });
       }
 
+
+      const btnOpenAnimationFloat = $("btnOpenAnimationFloat");
+      if (btnOpenAnimationFloat) btnOpenAnimationFloat.addEventListener("click", abrirModalAnimacao);
+
+      const btnCloseAnimation = $("btnCloseAnimation");
+      if (btnCloseAnimation) btnCloseAnimation.addEventListener("click", fecharModalAnimacao);
+
+      const btnPauseAnimation = $("btnPauseAnimation");
+      if (btnPauseAnimation) btnPauseAnimation.addEventListener("click", alternarPausaAnimacao);
+
+      const btnMaxAnimation = $("btnMaxAnimation");
+      if (btnMaxAnimation) btnMaxAnimation.addEventListener("click", alternarMaximizarAnimacao);
+
+      const animationModal = $("animationModal");
+      if (animationModal) {
+        animationModal.addEventListener("click", (ev) => {
+          if (ev.target === animationModal) fecharModalAnimacao();
+        });
+      }
+
+      document.addEventListener("keydown", (ev) => {
+        if (ev.key === "Escape") fecharModalAnimacao();
+      });
+
+      ["btnAnimation", "btnAnimacao", "btnMostrarAnimacao", "btnToggleAnimation", "btnAnimarGrafico", "btnGraph", "btnGrafico"].forEach(id => {
+        const btn = $(id);
+        if (btn) btn.addEventListener("click", abrirModalAnimacao);
+      });
+
       $("btnGerar").addEventListener("click", () => generateStageFields());
       $("btnSalvar").addEventListener("click", saveIntersection);
       $("btnNovo").addEventListener("click", () => clearForm(true));
       $("btnExemplo").addEventListener("click", loadExample);
       $("btnLimparTudo").addEventListener("click", clearAll);
 
-      $("btnToggleAnim").addEventListener("click", () => {
-        animationVisible = !animationVisible;
-        $("animationPanel").classList.toggle("active", animationVisible);
-        $("btnToggleAnim").textContent = animationVisible ? "Ocultar animação" : "Mostrar animação";
-        drawAnimation();
-      });
+      $("btnToggleAnim").addEventListener("click", abrirModalAnimacao);
 
       $("btnResetAnim").addEventListener("click", () => {
         animStart = performance.now();
+        animationPausedElapsed = 0;
+        animationPaused = false;
+        const btn = $("btnPauseAnimation");
+        if (btn) btn.innerHTML = "⏸ <span>Pausar</span>";
         drawAnimation();
       });
 
@@ -2420,6 +2790,27 @@
       <div class="copy-modal-actions">
         <button class="btn-soft" type="button" id="btnCancelCopy">Cancelar</button>
         <button class="btn-copy-data" type="button" id="btnConfirmCopy">Copiar para o cadastro</button>
+      </div>
+    </div>
+  </div>
+
+
+  <button class="animation-floating-btn" id="btnOpenAnimationFloat" type="button">📊 Abrir animação</button>
+
+  <div class="animation-modal" id="animationModal" aria-hidden="true">
+    <div class="animation-modal-card">
+      <div class="animation-modal-header">
+        <div class="animation-modal-title">📊 Animação do sincronismo semafórico</div>
+        <div class="animation-modal-actions">
+          <button class="animation-control-btn" id="btnPauseAnimation" type="button" aria-label="Pausar animação">⏸ <span>Pausar</span></button>
+          <button class="animation-control-btn" id="btnMaxAnimation" type="button" aria-label="Maximizar animação">⛶ <span>Maximizar</span></button>
+          <button class="animation-control-btn close" id="btnCloseAnimation" type="button" aria-label="Fechar animação">×</button>
+        </div>
+      </div>
+      <div class="animation-modal-body">
+        <div class="animation-holder">
+          <canvas id="syncCanvasModal"></canvas>
+        </div>
       </div>
     </div>
   </div>
