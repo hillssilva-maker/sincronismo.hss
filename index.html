@@ -1198,6 +1198,130 @@
       vertical-align: middle;
     }
 
+  
+    .suggestion-group-title {
+      margin: 10px 0 6px;
+      color: #0f172a;
+      font-weight: 900;
+      font-size: .92rem;
+    }
+
+    .suggestion.alt-adjust {
+      margin-top: 12px;
+      background: #eef6ff;
+      border: 2px solid #2563eb;
+      color: #0f172a;
+      box-shadow: 0 8px 18px rgba(37, 99, 235, .14);
+    }
+
+    .suggestion.alt-adjust .suggestion-title {
+      color: #1d4ed8;
+      border-bottom: 1px solid #bfdbfe;
+    }
+
+    .suggestion.alt-adjust .suggestion-main {
+      border: 2px solid #2563eb;
+    }
+
+    .suggestion.alt-adjust .suggestion-line {
+      border: 1px solid #bfdbfe;
+    }
+
+  
+    .recommend-option-title {
+      margin: 14px 0 8px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #0f172a, #1d4ed8);
+      color: #ffffff;
+      font-weight: 900;
+      box-shadow: 0 8px 18px rgba(15, 23, 42, .18);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .recommend-option-title .option-number {
+      background: #ffffff;
+      color: #1d4ed8;
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-weight: 900;
+    }
+
+    .recommend-option-title .option-action {
+      font-weight: 900;
+      letter-spacing: .01em;
+    }
+
+    .def-sec {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: var(--green-soft);
+      color: var(--green);
+      font-weight: 900;
+      border: 1px solid #b8efca;
+      margin: 0 3px;
+    }
+
+  
+    /* Cabeçalho dos cruzamentos no mesmo estilo das Opções */
+    .cross-top {
+      background: linear-gradient(135deg, #0f172a, #1d4ed8) !important;
+      color: #ffffff !important;
+      border-bottom: 0 !important;
+      padding: 12px 14px !important;
+      box-shadow: 0 8px 18px rgba(15,23,42,.18);
+    }
+
+    .cross-name {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #ffffff !important;
+      font-weight: 900;
+      font-size: 1.05rem;
+    }
+
+    .cross-name::before {
+      content: "🚦";
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      background: #ffffff;
+      color: #1d4ed8;
+      font-size: 1rem;
+      font-weight: 900;
+      flex: 0 0 auto;
+    }
+
+    .cross-actions button {
+      border: 1px solid rgba(255,255,255,.25) !important;
+      background: rgba(255,255,255,.12) !important;
+      color: #ffffff !important;
+      backdrop-filter: blur(4px);
+    }
+
+    .cross-actions button:hover {
+      background: rgba(255,255,255,.22) !important;
+    }
+
+    .cross-card {
+      overflow: hidden;
+      border-radius: 18px;
+      box-shadow: 0 12px 28px rgba(15,23,42,.14);
+    }
+
+    .cross-meta {
+      background: #ffffff;
+    }
+
   </style>
 </head>
 
@@ -1677,6 +1801,12 @@
       return `<span class="obs-ref"><span class="obs-road">${nome}</span> / <span class="obs-stage">${estagio}</span></span>`;
     }
 
+
+    function defasagemIdealDoPrimeiro(c, prox, t) {
+      const alvoB = ((t.eb.abreSem + prox.defasagem) % c.ciclo + c.ciclo) % c.ciclo;
+      return ((alvoB - t.ea.abreSem) % c.ciclo + c.ciclo) % c.ciclo;
+    }
+
     function descricaoDiferencaAbertura(t, c, prox) {
       const nomeA = refFormatada(c.nome, t.ea.nome);
       const nomeB = refFormatada(prox.nome, t.eb.nome);
@@ -1760,6 +1890,7 @@
       const syncs = cruzamentos.slice(0, -1).map((c, i) => {
         const prox = cruzamentos[i + 1];
         const t = testeComProximo(c, prox);
+        const defIdealPrimeiro = defasagemIdealDoPrimeiro(c, prox, t);
 
         return `
           <div class="sync-box ${t.ok ? "ok" : "bad"}">
@@ -1793,6 +1924,10 @@
                 <strong>${t.diff}s</strong>
               </div>
 
+              <div class="recommend-option-title">
+                <span class="option-number">Opção 1</span>
+                <span class="option-action">Ajustar o segundo cruzamento</span>
+              </div>
               <div class="suggestion ${t.ok ? "synced" : "need-adjust"}">
                 <div class="suggestion-title">${t.ok ? "✅ Sincronismo ajustado" : "💡 Recomendação de defasagem para sincronismo"}</div>
 
@@ -1810,14 +1945,56 @@
                   </div>
 
                   <div class="suggestion-line">
-                    <strong>Defasagem atual de ${prox.nome}:</strong> ${prox.defasagem}s
+                    <strong>Defasagem atual de</strong>
+                    <span class="obs-ref"><span class="obs-road">${prox.nome}</span></span>:
+                    <span class="def-sec">${prox.defasagem}s</span>
                   </div>
 
                   <div class="suggestion-line">
                     <strong>O que alterar:</strong>
                     ${t.ok
                       ? `<span class="ok-text">não precisa alterar. A defasagem atual já sincroniza este par.</span>`
-                      : `configure a <strong>defasagem</strong> do cruzamento <strong>${prox.nome}</strong> para <strong>${t.defIdeal}s</strong>.`
+                      : `configure a <strong>defasagem</strong> do cruzamento
+                        <span class="obs-ref"><span class="obs-road">${prox.nome}</span></span>
+                        para <span class="def-sec">${t.defIdeal}s</span>.`
+                    }
+                  </div>
+                </div>
+              </div>
+
+              <div class="recommend-option-title">
+                <span class="option-number">Opção 2</span>
+                <span class="option-action">Ajustar o primeiro cruzamento</span>
+              </div>
+              <div class="suggestion ${t.ok ? "synced" : "alt-adjust"}">
+                <div class="suggestion-title">${t.ok ? "✅ Sincronismo ajustado" : "🔁 Ajuste alternativo de defasagem"}</div>
+
+                <div class="suggestion-main">
+                  <span>${t.ok ? "Defasagem correta para o cruzamento " + c.nome : "Defasagem ideal para o cruzamento " + c.nome}</span>
+                  <strong>${defIdealPrimeiro}s</strong>
+                </div>
+
+                <div class="suggestion-lines">
+                  <div class="suggestion-line">
+                    <strong>Objetivo:</strong> fazer
+                    <span class="obs-ref"><span class="obs-road">${c.nome}</span> / <span class="obs-stage">${t.ea.nome}</span></span>
+                    abrir junto com
+                    <span class="obs-ref"><span class="obs-road">${prox.nome}</span> / <span class="obs-stage">${t.eb.nome}</span></span>.
+                  </div>
+
+                  <div class="suggestion-line">
+                    <strong>Defasagem atual de</strong>
+                    <span class="obs-ref"><span class="obs-road">${c.nome}</span></span>:
+                    <span class="def-sec">${c.defasagem}s</span>
+                  </div>
+
+                  <div class="suggestion-line">
+                    <strong>O que alterar:</strong>
+                    ${t.ok
+                      ? `<span class="ok-text">não precisa alterar. A defasagem atual já sincroniza este par.</span>`
+                      : `configure a <strong>defasagem</strong> do cruzamento
+                        <span class="obs-ref"><span class="obs-road">${c.nome}</span></span>
+                        para <span class="def-sec">${defIdealPrimeiro}s</span>.`
                     }
                   </div>
                 </div>
