@@ -1177,7 +1177,7 @@
   
     .open-diff-message .diff-time-before,
     .open-diff-message .diff-word-before {
-      color: #2563eb;
+      color: #16a34a;
       font-weight: 900;
     }
 
@@ -1623,6 +1623,224 @@
 
       .animation-control-btn {
         min-width: 40px !important;
+      }
+    }
+
+  
+    .adjust-compare-card {
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: #f8fafc;
+      border: 1px solid #dbe4f0;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.55);
+    }
+
+    .adjust-compare-title {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #0f172a, #1d4ed8);
+      color: #ffffff;
+      font-weight: 900;
+      margin-bottom: 8px;
+      font-size: .86rem;
+    }
+
+    .adjust-compare-flow {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      line-height: 1.7;
+    }
+
+    .adjust-arrow {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 32px;
+      height: 28px;
+      border-radius: 999px;
+      background: #e0f2fe;
+      color: #0369a1;
+      font-weight: 900;
+      border: 1px solid #bae6fd;
+    }
+
+    .adjust-action-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: #ecfdf5;
+      color: #15803d;
+      border: 1px solid #bbf7d0;
+      font-weight: 900;
+    }
+
+    .adjust-action-pill.reduce {
+      background: #fff7ed;
+      color: #c2410c;
+      border-color: #fed7aa;
+    }
+
+    .adjust-action-pill.none {
+      background: #eef2ff;
+      color: #3730a3;
+      border-color: #c7d2fe;
+    }
+
+  
+    .comparison-card {
+      margin-top: 16px;
+      border-radius: 22px;
+      background: #ffffff;
+      border: 2px solid #dbe4f0;
+      overflow: hidden;
+      box-shadow: 0 14px 30px rgba(15, 23, 42, .10);
+    }
+
+    .comparison-header {
+      background: linear-gradient(135deg, #0f172a, #1d4ed8);
+      color: #ffffff;
+      padding: 13px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .comparison-title {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-weight: 900;
+      flex-wrap: wrap;
+    }
+
+    .comparison-number {
+      background: #ffffff;
+      color: #1d4ed8;
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-weight: 900;
+    }
+
+    .comparison-route {
+      font-weight: 900;
+    }
+
+    .show-all-options {
+      border: 1px solid rgba(255,255,255,.28);
+      background: rgba(255,255,255,.16);
+      color: #ffffff;
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .show-all-options:hover {
+      background: rgba(255,255,255,.25);
+    }
+
+    .comparison-body {
+      padding: 12px;
+      background: #f8fafc;
+      display: grid;
+      gap: 10px;
+    }
+
+    .option-details {
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid #dbe4f0;
+      background: #ffffff;
+    }
+
+    .option-details summary {
+      list-style: none;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .option-details summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .option-details .recommend-option-title {
+      margin: 0;
+      border-radius: 0;
+      box-shadow: none;
+    }
+
+    .option-details summary .option-toggle {
+      margin-left: auto;
+      background: rgba(255,255,255,.16);
+      color: #ffffff;
+      border-radius: 999px;
+      padding: 4px 9px;
+      font-weight: 900;
+      font-size: .82rem;
+    }
+
+    .option-details[open] summary .option-toggle {
+      background: rgba(255,255,255,.28);
+    }
+
+    .option-details-content {
+      padding: 12px;
+      background: #ffffff;
+    }
+
+    .cycle-info-grid {
+      margin: 10px 0;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .cycle-info-box {
+      border-radius: 14px;
+      border: 1px solid #dbe4f0;
+      background: #f8fafc;
+      padding: 10px;
+    }
+
+    .cycle-info-title {
+      font-weight: 900;
+      margin-bottom: 8px;
+      color: #0f172a;
+    }
+
+    .cycle-info-line {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+      margin: 6px 0;
+    }
+
+    @media (max-width: 720px) {
+      .comparison-header {
+        align-items: stretch;
+      }
+
+      .show-all-options {
+        width: 100%;
+      }
+
+      .cycle-info-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .option-details summary .option-toggle {
+        margin-left: 0;
       }
     }
 
@@ -2113,6 +2331,85 @@
       return ((alvoB - t.ea.abreSem) % c.ciclo + c.ciclo) % c.ciclo;
     }
 
+
+    function diferencaAjusteDefasagem(atual, ideal, ciclo) {
+      atual = Number(atual) || 0;
+      ideal = Number(ideal) || 0;
+      ciclo = Number(ciclo) || 1;
+
+      if (atual === ideal) {
+        return { texto: "sem alteração", classe: "none", valor: 0 };
+      }
+
+      const aumentar = ((ideal - atual) % ciclo + ciclo) % ciclo;
+      const reduzir = ((atual - ideal) % ciclo + ciclo) % ciclo;
+
+      if (aumentar <= reduzir) {
+        return { texto: `aumentar ${aumentar}s`, classe: "", valor: aumentar };
+      }
+
+      return { texto: `reduzir ${reduzir}s`, classe: "reduce", valor: reduzir };
+    }
+
+    function blocoComparacaoAjuste(titulo, origemNome, origemEstagio, destinoNome, destinoEstagio, ajustarNome, atual, ideal, ciclo) {
+      const ajuste = diferencaAjusteDefasagem(atual, ideal, ciclo);
+      return `
+        <div class="adjust-compare-card">
+          <div class="adjust-compare-title">${titulo}</div>
+          <div class="adjust-compare-flow">
+            ${refFormatada(origemNome, origemEstagio)}
+            <span class="adjust-arrow">→</span>
+            ${refFormatada(destinoNome, destinoEstagio)}
+            <span>ajustando</span>
+            <span class="obs-ref"><span class="obs-road">${ajustarNome}</span></span>
+            <span>de</span>
+            <span class="def-sec">${atual}s</span>
+            <span>para</span>
+            <span class="def-sec">${ideal}s</span>
+            <span class="adjust-action-pill ${ajuste.classe}">${ajuste.texto}</span>
+          </div>
+        </div>
+      `;
+    }
+
+
+    function infoCiclosComparacao(c, prox, t) {
+      const aberturaA = ((t.ea.abreSem + c.defasagem) % c.ciclo + c.ciclo) % c.ciclo;
+      const aberturaB = ((t.eb.abreSem + prox.defasagem) % prox.ciclo + prox.ciclo) % prox.ciclo;
+
+      return `
+        <div class="cycle-info-grid">
+          <div class="cycle-info-box">
+            <div class="cycle-info-title">${refFormatada(c.nome, t.ea.nome)}</div>
+            <div class="cycle-info-line">
+              <strong>Defasagem atual:</strong>
+              <span class="def-sec">${c.defasagem}s</span>
+            </div>
+            <div class="cycle-info-line">
+              <strong>Abertura no ciclo:</strong>
+              <span class="def-sec">${aberturaA}s</span>
+            </div>
+          </div>
+
+          <div class="cycle-info-box">
+            <div class="cycle-info-title">${refFormatada(prox.nome, t.eb.nome)}</div>
+            <div class="cycle-info-line">
+              <strong>Defasagem atual:</strong>
+              <span class="def-sec">${prox.defasagem}s</span>
+            </div>
+            <div class="cycle-info-line">
+              <strong>Abertura no ciclo:</strong>
+              <span class="def-sec">${aberturaB}s</span>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function mostrarTodasOpcoesComparacao(idx) {
+      document.querySelectorAll(`[data-comparison="${idx}"]`).forEach(el => el.open = true);
+    }
+
     function descricaoDiferencaAbertura(t, c, prox) {
       const nomeA = refFormatada(c.nome, t.ea.nome);
       const nomeB = refFormatada(prox.nome, t.eb.nome);
@@ -2251,6 +2548,7 @@
         const prox = cruzamentos[i + 1];
         const t = testeComProximo(c, prox);
         const defIdealPrimeiro = defasagemIdealDoPrimeiro(c, prox, t);
+        const ajustePrimeiro = diferencaAjusteDefasagem(c.defasagem, defIdealPrimeiro, c.ciclo);
 
         return `
           <div class="sync-box ${t.ok ? "ok" : "bad"}">
@@ -2284,80 +2582,137 @@
                 <strong>${t.diff}s</strong>
               </div>
 
-              <div class="recommend-option-title">
-                <span class="option-number">Opção 1</span>
-                <span class="option-action">Ajustar ${prox.nome}</span>
+              <div class="comparison-card">
+                <div class="comparison-header">
+                  <div class="comparison-title">
+                    <span class="comparison-number">Comparação ${i + 1}</span>
+                    <span class="comparison-route">${c.nome} ↔ ${prox.nome}</span>
+                  </div>
+                  <button class="show-all-options" type="button" onclick="mostrarTodasOpcoesComparacao(${i})">Mostrar todos</button>
+                </div>
+
+                <div class="comparison-body">
+                  <details class="option-details" data-comparison="${i}">
+                    <summary>
+                      <div class="recommend-option-title">
+                        <span class="option-number">Opção 1</span>
+                        <span class="option-action">Ajustar ${prox.nome}</span>
+                        <span class="option-toggle">Ver dados</span>
+                      </div>
+                    </summary>
+
+                    <div class="option-details-content">
+                      <div class="suggestion ${t.ok ? "synced" : "need-adjust"}">
+                        <div class="suggestion-title">${t.ok ? "✅ Sincronismo ajustado" : "💡 Recomendação de defasagem para sincronismo"}</div>
+
+                        <div class="suggestion-main">
+                          <span>${t.ok ? "Defasagem correta para o cruzamento " + prox.nome : "Defasagem ideal para o cruzamento " + prox.nome}</span>
+                          <strong>${t.defIdeal}s</strong>
+                        </div>
+
+                        <div class="suggestion-lines">
+                          ${infoCiclosComparacao(c, prox, t)}
+
+                          <div class="suggestion-line">
+                            <strong>Objetivo:</strong> fazer
+                            <span class="obs-ref"><span class="obs-road">${prox.nome}</span> / <span class="obs-stage">${t.eb.nome}</span></span>
+                            abrir junto com
+                            <span class="obs-ref"><span class="obs-road">${c.nome}</span> / <span class="obs-stage">${t.ea.nome}</span></span>.
+                          </div>
+
+                          ${blocoComparacaoAjuste(
+                            "Comparação A → B",
+                            c.nome,
+                            t.ea.nome,
+                            prox.nome,
+                            t.eb.nome,
+                            prox.nome,
+                            prox.defasagem,
+                            t.defIdeal,
+                            prox.ciclo
+                          )}
+
+                          <div class="suggestion-line">
+                            <strong>Defasagem atual de</strong>
+                            <span class="obs-ref"><span class="obs-road">${prox.nome}</span></span>:
+                            <span class="def-sec">${prox.defasagem}s</span>
+                          </div>
+
+                          <div class="suggestion-line">
+                            <strong>O que alterar:</strong>
+                            ${t.ok
+                              ? `<span class="ok-text">não precisa alterar. A defasagem atual já sincroniza este par.</span>`
+                              : `configure a <strong>defasagem</strong> do cruzamento
+                                <span class="obs-ref"><span class="obs-road">${prox.nome}</span></span>
+                                para <span class="def-sec">${t.defIdeal}s</span>.`
+                            }
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </details>
+
+                  <details class="option-details" data-comparison="${i}">
+                    <summary>
+                      <div class="recommend-option-title">
+                        <span class="option-number">Opção 2</span>
+                        <span class="option-action">Ajustar ${c.nome}</span>
+                        <span class="option-toggle">Ver dados</span>
+                      </div>
+                    </summary>
+
+                    <div class="option-details-content">
+                      <div class="suggestion ${t.ok ? "synced" : "alt-adjust"}">
+                        <div class="suggestion-title">${t.ok ? "✅ Sincronismo ajustado" : "🔁 Ajuste alternativo de defasagem"}</div>
+
+                        <div class="suggestion-main">
+                          <span>${t.ok ? "Defasagem correta para o cruzamento " + c.nome : "Defasagem ideal para o cruzamento " + c.nome}</span>
+                          <strong>${defIdealPrimeiro}s</strong>
+                        </div>
+
+                        <div class="suggestion-lines">
+                          ${infoCiclosComparacao(c, prox, t)}
+
+                          <div class="suggestion-line">
+                            <strong>Objetivo:</strong> fazer
+                            <span class="obs-ref"><span class="obs-road">${c.nome}</span> / <span class="obs-stage">${t.ea.nome}</span></span>
+                            abrir junto com
+                            <span class="obs-ref"><span class="obs-road">${prox.nome}</span> / <span class="obs-stage">${t.eb.nome}</span></span>.
+                          </div>
+
+                          ${blocoComparacaoAjuste(
+                            "Comparação B → A",
+                            prox.nome,
+                            t.eb.nome,
+                            c.nome,
+                            t.ea.nome,
+                            c.nome,
+                            c.defasagem,
+                            defIdealPrimeiro,
+                            c.ciclo
+                          )}
+
+                          <div class="suggestion-line">
+                            <strong>Defasagem atual de</strong>
+                            <span class="obs-ref"><span class="obs-road">${c.nome}</span></span>:
+                            <span class="def-sec">${c.defasagem}s</span>
+                          </div>
+
+                          <div class="suggestion-line">
+                            <strong>O que alterar:</strong>
+                            ${t.ok
+                              ? `<span class="ok-text">não precisa alterar. A defasagem atual já sincroniza este par.</span>`
+                              : `configure a <strong>defasagem</strong> do cruzamento
+                                <span class="obs-ref"><span class="obs-road">${c.nome}</span></span>
+                                para <span class="def-sec">${defIdealPrimeiro}s</span>.`
+                            }
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </details>
+                </div>
               </div>
-              <div class="suggestion ${t.ok ? "synced" : "need-adjust"}">
-                <div class="suggestion-title">${t.ok ? "✅ Sincronismo ajustado" : "💡 Recomendação de defasagem para sincronismo"}</div>
-
-                <div class="suggestion-main">
-                  <span>${t.ok ? "Defasagem correta para o cruzamento " + prox.nome : "Defasagem ideal para o cruzamento " + prox.nome}</span>
-                  <strong>${t.defIdeal}s</strong>
-                </div>
-
-                <div class="suggestion-lines">
-                  <div class="suggestion-line">
-                    <strong>Objetivo:</strong> fazer
-                    <span class="obs-ref"><span class="obs-road">${prox.nome}</span> / <span class="obs-stage">${t.eb.nome}</span></span>
-                    abrir junto com
-                    <span class="obs-ref"><span class="obs-road">${c.nome}</span> / <span class="obs-stage">${t.ea.nome}</span></span>.
-                  </div>
-
-                  <div class="suggestion-line">
-                    <strong>Defasagem atual de</strong>
-                    <span class="obs-ref"><span class="obs-road">${prox.nome}</span></span>:
-                    <span class="def-sec">${prox.defasagem}s</span>
-                  </div>
-
-                  <div class="suggestion-line">
-                    <strong>O que alterar:</strong>
-                    ${t.ok
-                      ? `<span class="ok-text">não precisa alterar. A defasagem atual já sincroniza este par.</span>`
-                      : `configure a <strong>defasagem</strong> do cruzamento
-                        <span class="obs-ref"><span class="obs-road">${prox.nome}</span></span>
-                        para <span class="def-sec">${t.defIdeal}s</span>.`
-                    }
-                  </div>
-                </div>
-              </div>
-
-              <div class="recommend-option-title">
-                <span class="option-number">Opção 2</span>
-                <span class="option-action">Ajustar ${c.nome}</span>
-              </div>
-              <div class="suggestion ${t.ok ? "synced" : "alt-adjust"}">
-                <div class="suggestion-title">${t.ok ? "✅ Sincronismo ajustado" : "🔁 Ajuste alternativo de defasagem"}</div>
-
-                <div class="suggestion-main">
-                  <span>${t.ok ? "Defasagem correta para o cruzamento " + c.nome : "Defasagem ideal para o cruzamento " + c.nome}</span>
-                  <strong>${defIdealPrimeiro}s</strong>
-                </div>
-
-                <div class="suggestion-lines">
-                  <div class="suggestion-line">
-                    <strong>Objetivo:</strong> fazer
-                    <span class="obs-ref"><span class="obs-road">${c.nome}</span> / <span class="obs-stage">${t.ea.nome}</span></span>
-                    abrir junto com
-                    <span class="obs-ref"><span class="obs-road">${prox.nome}</span> / <span class="obs-stage">${t.eb.nome}</span></span>.
-                  </div>
-
-                  <div class="suggestion-line">
-                    <strong>Defasagem atual de</strong>
-                    <span class="obs-ref"><span class="obs-road">${c.nome}</span></span>:
-                    <span class="def-sec">${c.defasagem}s</span>
-                  </div>
-
-                  <div class="suggestion-line">
-                    <strong>O que alterar:</strong>
-                    ${t.ok
-                      ? `<span class="ok-text">não precisa alterar. A defasagem atual já sincroniza este par.</span>`
-                      : `configure a <strong>defasagem</strong> do cruzamento
-                        <span class="obs-ref"><span class="obs-road">${c.nome}</span></span>
-                        para <span class="def-sec">${defIdealPrimeiro}s</span>.`
-                    }
-                  </div>
-                </div>
               </div>
             </div>
           </div>
@@ -2666,7 +3021,7 @@
 
           const ySeta = barYA + 132;
           const isSimultaneo = teste.diff === 0;
-          const corSeta = isSimultaneo ? "#16a34a" : (teste.abreA < teste.abreB ? "#2563eb" : "#dc2626");
+          const corSeta = isSimultaneo ? "#16a34a" : (teste.abreA < teste.abreB ? "#16a34a" : "#dc2626");
           const textoSeta = `${teste.diff}s`;
 
           desenharSetaDupla(xA, xB, ySeta, textoSeta, corSeta, isSimultaneo);
