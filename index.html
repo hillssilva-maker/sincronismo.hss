@@ -1844,6 +1844,55 @@
       }
     }
 
+  
+    .change-highlight {
+      margin-top: 12px;
+      padding: 13px 14px !important;
+      border-radius: 15px !important;
+      background: #fffaf0 !important;
+      border: 2px solid #facc15 !important;
+      border-left: 7px solid #f59e0b !important;
+      box-shadow: 0 6px 16px rgba(245, 158, 11, .10) !important;
+      color: #0f172a;
+      font-size: 1rem;
+    }
+
+    .change-highlight strong:first-child {
+      color: #92400e;
+      font-weight: 900;
+      margin-right: 4px;
+    }
+
+    .sec-current {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: #fef2f2;
+      color: #dc2626;
+      border: 1px solid #fecaca;
+      font-weight: 900;
+      margin: 0 3px;
+    }
+
+    .sec-ideal {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: #ecfdf5;
+      color: #16a34a;
+      border: 1px solid #bbf7d0;
+      font-weight: 900;
+      margin: 0 3px;
+    }
+
+    .change-highlight .adjust-action-pill {
+      margin-left: 4px;
+      font-size: .95rem;
+      padding: 6px 10px;
+    }
+
   </style>
 </head>
 
@@ -2360,13 +2409,8 @@
             ${refFormatada(origemNome, origemEstagio)}
             <span class="adjust-arrow">→</span>
             ${refFormatada(destinoNome, destinoEstagio)}
-            <span>ajustando</span>
-            <span class="obs-ref"><span class="obs-road">${ajustarNome}</span></span>
-            <span>de</span>
-            <span class="def-sec">${atual}s</span>
-            <span>para</span>
+            <span>defasagem ideal:</span>
             <span class="def-sec">${ideal}s</span>
-            <span class="adjust-action-pill ${ajuste.classe}">${ajuste.texto}</span>
           </div>
         </div>
       `;
@@ -2613,13 +2657,6 @@
                         <div class="suggestion-lines">
                           ${infoCiclosComparacao(c, prox, t)}
 
-                          <div class="suggestion-line">
-                            <strong>Objetivo:</strong> fazer
-                            <span class="obs-ref"><span class="obs-road">${prox.nome}</span> / <span class="obs-stage">${t.eb.nome}</span></span>
-                            abrir junto com
-                            <span class="obs-ref"><span class="obs-road">${c.nome}</span> / <span class="obs-stage">${t.ea.nome}</span></span>.
-                          </div>
-
                           ${blocoComparacaoAjuste(
                             "Comparação A → B",
                             c.nome,
@@ -2632,19 +2669,17 @@
                             prox.ciclo
                           )}
 
-                          <div class="suggestion-line">
-                            <strong>Defasagem atual de</strong>
-                            <span class="obs-ref"><span class="obs-road">${prox.nome}</span></span>:
-                            <span class="def-sec">${prox.defasagem}s</span>
-                          </div>
-
-                          <div class="suggestion-line">
+                          <div class="suggestion-line change-highlight">
                             <strong>O que alterar:</strong>
                             ${t.ok
                               ? `<span class="ok-text">não precisa alterar. A defasagem atual já sincroniza este par.</span>`
                               : `configure a <strong>defasagem</strong> do cruzamento
                                 <span class="obs-ref"><span class="obs-road">${prox.nome}</span></span>
-                                para <span class="def-sec">${t.defIdeal}s</span>.`
+                                de <span class="sec-current">${prox.defasagem}s</span>
+                                para <span class="sec-ideal">${t.defIdeal}s</span>,
+                                <span class="adjust-action-pill ${diferencaAjusteDefasagem(prox.defasagem, t.defIdeal, prox.ciclo).classe}">
+                                  ${diferencaAjusteDefasagem(prox.defasagem, t.defIdeal, prox.ciclo).texto}
+                                </span>.`
                             }
                           </div>
                         </div>
@@ -2673,13 +2708,6 @@
                         <div class="suggestion-lines">
                           ${infoCiclosComparacao(c, prox, t)}
 
-                          <div class="suggestion-line">
-                            <strong>Objetivo:</strong> fazer
-                            <span class="obs-ref"><span class="obs-road">${c.nome}</span> / <span class="obs-stage">${t.ea.nome}</span></span>
-                            abrir junto com
-                            <span class="obs-ref"><span class="obs-road">${prox.nome}</span> / <span class="obs-stage">${t.eb.nome}</span></span>.
-                          </div>
-
                           ${blocoComparacaoAjuste(
                             "Comparação B → A",
                             prox.nome,
@@ -2692,19 +2720,17 @@
                             c.ciclo
                           )}
 
-                          <div class="suggestion-line">
-                            <strong>Defasagem atual de</strong>
-                            <span class="obs-ref"><span class="obs-road">${c.nome}</span></span>:
-                            <span class="def-sec">${c.defasagem}s</span>
-                          </div>
-
-                          <div class="suggestion-line">
+                          <div class="suggestion-line change-highlight">
                             <strong>O que alterar:</strong>
                             ${t.ok
                               ? `<span class="ok-text">não precisa alterar. A defasagem atual já sincroniza este par.</span>`
                               : `configure a <strong>defasagem</strong> do cruzamento
                                 <span class="obs-ref"><span class="obs-road">${c.nome}</span></span>
-                                para <span class="def-sec">${defIdealPrimeiro}s</span>.`
+                                de <span class="sec-current">${c.defasagem}s</span>
+                                para <span class="sec-ideal">${defIdealPrimeiro}s</span>,
+                                <span class="adjust-action-pill ${diferencaAjusteDefasagem(c.defasagem, defIdealPrimeiro, c.ciclo).classe}">
+                                  ${diferencaAjusteDefasagem(c.defasagem, defIdealPrimeiro, c.ciclo).texto}
+                                </span>.`
                             }
                           </div>
                         </div>
